@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake } from 'lucide-react';
+import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield } from 'lucide-react';
 
 const features = [
   {
@@ -61,6 +61,29 @@ const aboutDavRohiniMunFeatures = [
         label: 'Community'
     }
 ];
+
+const visionFeatures = [
+    {
+        icon: Users,
+        title: 'Diverse Committees',
+        description: 'Explore seven diverse committees, ensuring a dynamic and multifaceted conference experience for all delegates.'
+    },
+    {
+        icon: Star,
+        title: 'Expert Guidance',
+        description: 'Benefit from an exceptionally qualified Executive Board and Judges\' Panel, ensuring a high standard of debate.'
+    },
+    {
+        icon: Trophy,
+        title: 'Awards & Recognition',
+        description: 'Compete for cash awards, certificates, and coveted prizes like trophies and medals to honor your achievements.'
+    },
+    {
+        icon: Shield,
+        title: 'Empowering Future Leaders',
+        description: 'Our core mission is to inspire and empower the next generation of leaders in diplomacy and global advocacy.'
+    }
+]
 
 
 export default function Home() {
@@ -182,6 +205,35 @@ export default function Home() {
                         })}
                     </div>
                 </div>
+            </div>
+        </div>
+      </section>
+
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-card/20">
+        <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                <div className="space-y-2">
+                    <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">Vision of DAV ROHINI MUN</h2>
+                    <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                        Join us in a journey that combines intellectual stimulation with tangible rewards, shaping a new generation of proactive, informed, and globally minded citizens.
+                    </p>
+                </div>
+            </div>
+            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:grid-cols-4 md:gap-12">
+                {visionFeatures.map((feature, index) => {
+                    const Icon = feature.icon;
+                    return (
+                        <div key={index} className="grid gap-4 rounded-lg border border-border bg-card p-6 text-left">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                <Icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="grid gap-1.5">
+                                <h3 className="text-lg font-bold font-headline">{feature.title}</h3>
+                                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
       </section>
