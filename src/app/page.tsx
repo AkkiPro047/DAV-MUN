@@ -86,10 +86,10 @@ const visionFeatures = [
 ]
 
 const awards = [
-  { icon: Trophy, text: '1 Best Delegate – Certificate & Trophy' },
-  { icon: Trophy, text: '1 High Commendation – Certificate & Trophy' },
-  { icon: Medal, text: '1 Special Mention – Certificate & Medal' },
-  { icon: Award, text: '2 Honourable Mentions – Certificate & Medal' },
+  { icon: Trophy, text: '1 Best Delegate - Certificate & Trophy' },
+  { icon: Trophy, text: '1 High Commendation - Certificate & Trophy' },
+  { icon: Medal, text: '1 Special Mention - Certificate & Medal' },
+  { icon: Award, text: '2 Honourable Mentions - Certificate & Medal' },
 ];
 
 
@@ -260,8 +260,8 @@ export default function Home() {
               const Icon = award.icon;
               return (
                 <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
-                    <Icon className="h-6 w-6 text-primary" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md text-yellow-400">
+                    <Icon className="h-6 w-6" />
                   </div>
                   <p className="flex-1 font-medium">{award.text}</p>
                 </div>
