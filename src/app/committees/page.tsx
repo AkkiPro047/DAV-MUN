@@ -1,69 +1,64 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Download, Library } from "lucide-react";
+import { ArrowRight, Shield, Users } from "lucide-react";
 import { conferences } from "@/lib/data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+
+const committeeIcons: { [key: string]: React.ElementType } = {
+  unsc: Shield,
+  disec: Shield,
+  unhrc: Shield,
+  who: Users,
+  uncsw: Users, 
+  'default': Shield
+};
 
 export default function CommitteesPage() {
+  const currentConference = conferences.find(c => c.id === 1); 
+
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:py-16">
       <div className="space-y-4 text-center mb-12">
         <h1 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          Committee & Topic Browser
+          Committees
         </h1>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-          Browse the committees and topics being simulated at our upcoming conferences.
+          Explore the diverse range of committees and agendas for this year&apos;s conference.
         </p>
       </div>
 
-      <Accordion type="multiple" defaultValue={[conferences[0].name]} className="w-full max-w-4xl mx-auto">
-        {conferences.map((conference) => (
-          <AccordionItem key={conference.id} value={conference.name}>
-            <AccordionTrigger className="font-headline text-xl">
-                {conference.name}
-            </AccordionTrigger>
-            <AccordionContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[35%] font-semibold">Committee</TableHead>
-                    <TableHead className="font-semibold">Topic</TableHead>
-                    <TableHead className="text-right font-semibold">Background Guide</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {conference.committees.map((committee) => (
-                    <TableRow key={committee.id}>
-                      <TableCell className="font-medium">{committee.name}</TableCell>
-                      <TableCell>{committee.topic}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" asChild>
-                          <a href={committee.guideUrl} download>
-                            <Download className="h-5 w-5" />
-                            <span className="sr-only">Download guide</span>
-                          </a>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <div className="grid gap-8 md:grid-cols-2 max-w-5xl mx-auto">
+        {currentConference?.committees.map((committee) => {
+           const Icon = committeeIcons[committee.id] || committeeIcons['default'];
+          return (
+          <Card key={committee.id} className="flex flex-col">
+            <CardHeader>
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="font-headline text-xl leading-tight">{committee.name}</CardTitle>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col">
+              <div className="flex-grow">
+                <p className="font-semibold text-muted-foreground mb-2">Agenda:</p>
+                <p className="text-foreground/90">
+                  {committee.topic}
+                </p>
+              </div>
+              <Button asChild className="mt-6 w-fit">
+                <Link href="#">
+                  View Details <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )})}
+      </div>
     </div>
   );
 }

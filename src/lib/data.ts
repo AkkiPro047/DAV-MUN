@@ -65,9 +65,10 @@ export const conferences = [
       id: 1,
       name: 'DavRohini Annual MUN 2024',
       committees: [
+        { id: 'uncsw', name: 'United Nations Commission on the Status of Women (UNCSW)', topic: 'Addressing the impact of climate-induced disasters and armed conflicts on the accessibility of reproductive and maternal healthcare services for women in fragile and conflict-affected states.', guideUrl: '#' },
+        { id: 'unhrc', name: 'United Nations Human Rights Council (UNHRC)', topic: 'Deliberating on the escalation of authoritarian digital surveillance and its threat to the right to peaceful assembly, political expression, and individual privacy in the age of AI and predictive policing.', guideUrl: '#' },
         { id: 'unsc', name: 'United Nations Security Council (UNSC)', topic: 'The Situation in the Middle East', guideUrl: '#' },
         { id: 'disec', name: 'Disarmament and International Security (DISEC)', topic: 'Preventing an Arms Race in Outer Space', guideUrl: '#' },
-        { id: 'unhrc', name: 'United Nations Human Rights Council (UNHRC)', topic: 'Protecting the Rights of Climate Refugees', guideUrl: '#' },
         { id: 'who', name: 'World Health Organization (WHO)', topic: 'Global Strategy for Pandemic Preparedness', guideUrl: '#' },
       ]
     },
