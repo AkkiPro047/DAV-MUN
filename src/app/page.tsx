@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield, Medal } from 'lucide-react';
+import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield, Medal, CheckCircle2 } from 'lucide-react';
 
 const features = [
   {
@@ -90,6 +90,16 @@ const awards = [
   { icon: Trophy, text: '1 High Commendation - Certificate & Trophy' },
   { icon: Medal, text: '1 Special Mention - Certificate & Medal' },
   { icon: Award, text: '2 Honourable Mentions - Certificate & Medal' },
+];
+
+const perks = [
+  "Participation certificates for all delegates.",
+  "Trophies and medals for outstanding winners.",
+  "Exclusive training sessions by well-known personalities.",
+  "Guidance from a highly experienced Executive Board.",
+  "Access to valuable internship opportunities.",
+  "Background guides and study material provided.",
+  "Premium delegate kits, meals, and beverages.",
 ];
 
 
@@ -270,6 +280,25 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-card/20">
+        <div className="container px-4 md:px-6">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">
+              Perks for Delegates
+            </h2>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-4xl gap-x-8 gap-y-4 md:grid-cols-2">
+            {perks.map((perk, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-green-500 mt-1" />
+                <p className="text-muted-foreground">{perk}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
