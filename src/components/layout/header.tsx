@@ -59,17 +59,11 @@ export default function Header() {
                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                <SheetDescription className="sr-only">Main navigation links for mobile devices.</SheetDescription>
               <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b pb-6">
+                <div className="flex items-center justify-between border-b pb-6 pr-6">
                   <Link href="/" className="flex items-center space-x-2">
                     <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6" />
                     <span className="font-bold font-headline">DavRohini MUN</span>
                   </Link>
-                  <SheetTrigger asChild>
-                     <Button variant="ghost" className="px-2" onClick={() => setMobileMenuOpen(false)}>
-                       <X className="h-6 w-6" />
-                       <span className="sr-only">Close Menu</span>
-                     </Button>
-                  </SheetTrigger>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     <nav className="grid items-start gap-4 px-2 py-6">
