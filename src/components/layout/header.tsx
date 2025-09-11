@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
 import { navLinks } from '@/lib/data';
@@ -55,7 +55,9 @@ export default function Header() {
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
+            <SheetContent side="right" className="pr-0">
+               <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+               <SheetDescription className="sr-only">Main navigation links for mobile devices.</SheetDescription>
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b pb-6">
                   <Link href="/" className="flex items-center space-x-2">

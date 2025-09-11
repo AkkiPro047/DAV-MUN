@@ -1,4 +1,4 @@
-import { Facebook, Instagram } from "lucide-react";
+import { Facebook, Instagram, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { navLinks } from "@/lib/data";
@@ -83,6 +83,10 @@ export default function Footer() {
                   <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                       <Instagram className="h-6 w-6" />
                       <span className="sr-only">Instagram</span>
+                  </Link>
+                  <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                      <Youtube className="h-6 w-6" />
+                      <span className="sr-only">YouTube</span>
                   </Link>
               </div>
           </div>
