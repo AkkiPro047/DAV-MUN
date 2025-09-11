@@ -73,7 +73,7 @@ export default function Footer() {
                         </DialogHeader>
                         <div className="aspect-video">
                           <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.813635798835!2d77.112117!3d28.725224999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d01b924976c69%3A0x442342e0325658d!2sDAV%20Public%20School%2C%20Rohini!5e0!3m2!1sen!2sin!4v1720547370388!5m2!1sen!2sin"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.552999081794!2d77.11667817457784!3d28.7053217256428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0158b9462593%3A0xfdfde4b1dcd52364!2sDAV%20Public%20School!5e0!3m2!1sen!2sin!4v1720547783307!5m2!1sen!2sin"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
