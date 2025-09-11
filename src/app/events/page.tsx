@@ -1,73 +1,73 @@
-'use client';
+import { Clock, MapPin } from 'lucide-react';
 
-import { useState } from 'react';
-import { Calendar } from '@/components/ui/calendar';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { events } from '@/lib/data';
-import { CalendarDays } from 'lucide-react';
+const schedule = [
+  {
+    day: 'Day 1',
+    date: 'October 25, 2025',
+    events: [
+      { time: '09:00 - 10:00', title: 'Registration & Breakfast', location: 'Main Hall' },
+      { time: '10:00 - 11:30', title: 'Opening Ceremony', location: 'Auditorium' },
+      { time: '11:30 - 13:00', title: 'Committee Session I', location: 'Assigned Rooms' },
+      { time: '13:00 - 14:00', title: 'Lunch', location: 'Cafeteria' },
+      { time: '14:00 - 16:30', title: 'Committee Session II', location: 'Assigned Rooms' },
+    ],
+  },
+  {
+    day: 'Day 2',
+    date: 'October 26, 2025',
+    events: [
+      { time: '09:30 - 12:30', title: 'Committee Session III', location: 'Assigned Rooms' },
+      { time: '12:30 - 13:30', title: 'Lunch', location: 'Cafeteria' },
+      { time: '13:30 - 15:30', title: 'Committee Session IV', location: 'Assigned Rooms' },
+      { time: '16:00 - 17:30', title: 'Closing Ceremony & Awards', location: 'Auditorium' },
+      { time: '17:30 - 18:30', title: 'High Tea', location: 'Main Hall' },
+    ],
+  },
+];
 
 export default function EventsPage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-
-  const eventDates = events.map(event => event.date.toDateString());
-
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:py-16">
       <div className="space-y-4 text-center mb-12">
         <h1 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          Conference & Events Calendar
+          Event Schedule
         </h1>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-          Explore upcoming Model UN conferences, workshops, and club meetings.
+          The complete timeline for the Dav Rohini MUN 2025 conference.
         </p>
       </div>
 
-      <div className="grid gap-12 md:grid-cols-2">
-        <div className="flex justify-center items-start">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            className="rounded-md border"
-            modifiers={{
-              event: (d) => eventDates.includes(d.toDateString())
-            }}
-            modifiersStyles={{
-              event: {
-                border: '2px solid hsl(var(--primary))',
-                color: 'hsl(var(--primary))'
-              }
-            }}
-          />
-        </div>
-        
-        <div className="space-y-6">
-          <h2 className="font-headline text-2xl font-semibold flex items-center">
-            <CalendarDays className="mr-3 h-6 w-6" />
-            Upcoming Events
-          </h2>
-          <div className="space-y-4">
-            {events
-                .filter(event => event.date >= new Date())
-                .sort((a, b) => a.date.getTime() - b.date.getTime())
-                .map(event => (
-              <Card key={event.id} className="transition-all hover:bg-accent">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                        <CardTitle className="font-headline text-lg">{event.title}</CardTitle>
-                        <CardDescription className="mt-1">{event.description}</CardDescription>
-                    </div>
-                    <div className="text-right text-sm text-muted-foreground whitespace-nowrap pl-4">
-                        <div className="font-medium">{event.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                        <div>{event.date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
+      <div className="max-w-4xl mx-auto space-y-12">
+        {schedule.map((day) => (
+          <div key={day.day}>
+            <div className="flex items-center mb-8">
+              <div className="flex-shrink-0">
+                <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 font-headline text-lg font-bold text-primary-foreground">
+                  {day.day}
+                </span>
+              </div>
+              <div className="ml-4 border-t border-dashed border-border/70 flex-grow h-px"></div>
+              <div className="ml-4 flex-shrink-0">
+                <span className="font-semibold text-lg text-muted-foreground">{day.date}</span>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute left-6 h-full w-0.5 bg-border/70 -translate-x-1/2"></div>
+              {day.events.map((event, index) => (
+                <div key={index} className="relative pl-12 mb-8">
+                   <div className="absolute top-1 left-6 h-3 w-3 bg-primary rounded-full -translate-x-1/2"></div>
+                    <p className="font-mono text-sm text-primary">{event.time}</p>
+                    <h3 className="font-headline text-xl font-semibold mt-1">{event.title}</h3>
+                    <p className="flex items-center mt-2 text-muted-foreground">
+                      <MapPin className="h-4 w-4 mr-2"/>
+                      {event.location}
+                    </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
