@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield } from 'lucide-react';
+import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield, Medal } from 'lucide-react';
 
 const features = [
   {
@@ -84,6 +84,13 @@ const visionFeatures = [
         description: 'Our core mission is to inspire and empower the next generation of leaders in diplomacy and global advocacy.'
     }
 ]
+
+const awards = [
+  { icon: Trophy, text: '1 Best Delegate – Certificate & Trophy' },
+  { icon: Trophy, text: '1 High Commendation – Certificate & Trophy' },
+  { icon: Medal, text: '1 Special Mention – Certificate & Medal' },
+  { icon: Award, text: '2 Honourable Mentions – Certificate & Medal' },
+];
 
 
 export default function Home() {
@@ -219,7 +226,7 @@ export default function Home() {
                     </p>
                 </div>
             </div>
-            <div className="mx-auto grid max-w-6xl items-stretch gap-8 py-12 sm:grid-cols-2 md:grid-cols-4">
+            <div className="mx-auto grid max-w-5xl items-stretch gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
                 {visionFeatures.map((feature, index) => {
                     const Icon = feature.icon;
                     return (
@@ -235,6 +242,32 @@ export default function Home() {
                     );
                 })}
             </div>
+        </div>
+      </section>
+
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">
+              Awards for Participants
+            </h2>
+            <p className="mt-4 text-muted-foreground md:text-lg">
+              All participants of the Offline Edition will receive a Participation Certificate and the opportunity to engage with our highly experienced Executive Board. In addition, each committee will recognize outstanding delegates through 8 prestigious award categories:
+            </p>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-2xl gap-4">
+            {awards.map((award, index) => {
+              const Icon = award.icon;
+              return (
+                <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <p className="flex-1 font-medium">{award.text}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
     </div>
