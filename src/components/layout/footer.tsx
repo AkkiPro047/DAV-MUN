@@ -110,17 +110,9 @@ export default function Footer() {
             <div>
                 <h3 className="font-headline text-lg font-semibold">Follow Us</h3>
                 <div className="mt-4 flex space-x-4">
-                    <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                        <Facebook className="h-6 w-6" />
-                        <span className="sr-only">Facebook</span>
-                    </Link>
-                    <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="https://www.instagram.com/davps_rohini/" className="text-muted-foreground hover:text-foreground transition-colors">
                         <Instagram className="h-6 w-6" />
                         <span className="sr-only">Instagram</span>
-                    </Link>
-                    <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                        <Youtube className="h-6 w-6" />
-                        <span className="sr-only">YouTube</span>
                     </Link>
                 </div>
             </div>
