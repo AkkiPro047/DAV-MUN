@@ -11,7 +11,11 @@ import { navLinks } from '@/lib/data';
 import Image from 'next/image';
 
 const allNavLinks = [...navLinks, { href: '/faq', label: 'FAQ' }];
-
+const authNavLinks = [
+    { href: '/login', label: 'Login' },
+    { href: '/register', label: 'Register' },
+    { href: '/track-submission', label: 'Track Submission' },
+];
 
 export default function Header() {
   const pathname = usePathname();
@@ -45,6 +49,14 @@ export default function Header() {
         </nav>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="hidden items-center gap-2 md:flex">
+             {authNavLinks.map((link) => (
+                <Button key={link.href} asChild variant={link.label === 'Register' ? 'default' : 'outline'} size="sm">
+                    <Link href={link.href}>{link.label}</Link>
+                </Button>
+            ))}
+          </div>
+
           <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button
@@ -67,7 +79,7 @@ export default function Header() {
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     <nav className="grid items-start gap-4 px-2 py-6">
-                    {allNavLinks.map((link) => (
+                    {[...allNavLinks, ...authNavLinks].map((link) => (
                         <Link
                         key={link.href}
                         href={link.href}

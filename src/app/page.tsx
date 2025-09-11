@@ -136,6 +136,17 @@ export default function Home() {
             solutions for a better tomorrow. Join us for an unforgettable
             experience.
           </p>
+           <div className="mt-8 flex justify-center gap-4">
+            <Button asChild size="lg">
+              <Link href="/register">Register</Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/login">Login</Link>
+            </Button>
+             <Button asChild size="lg" variant="outline">
+                <Link href="/track-submission">Track Submission</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -313,7 +324,7 @@ export default function Home() {
           </p>
           <div className="mt-8">
             <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
-              <Link href="#">Delegate Login</Link>
+              <Link href="/login">Delegate Login</Link>
             </Button>
           </div>
         </div>
