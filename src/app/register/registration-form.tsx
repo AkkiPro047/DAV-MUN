@@ -335,7 +335,7 @@ export default function RegistrationForm() {
                 <div className="flex flex-col items-center">
                     <p className="font-semibold mb-2">Scan UPI QR</p>
                     <Image src="https://i.postimg.cc/d1grCj2z/qr-code.png" alt="UPI QR Code" width={150} height={150} className="rounded-md border p-1" />
-                    <p className="text-xs text-muted-foreground mt-2 text-center">After paying, upload your screenshot above. We store it in Drive.</p>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">After paying, upload your screenshot above.</p>
                 </div>
             </div>
           </CardContent>
