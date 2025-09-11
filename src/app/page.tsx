@@ -136,7 +136,7 @@ export default function Home() {
             solutions for a better tomorrow. Join us for an unforgettable
             experience.
           </p>
-           <div className="mt-8 flex justify-center gap-4">
+           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg">
               <Link href="/register">Register</Link>
             </Button>
