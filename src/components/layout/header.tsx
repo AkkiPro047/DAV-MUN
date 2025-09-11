@@ -10,7 +10,7 @@ import { Menu, X } from 'lucide-react';
 import { navLinks } from '@/lib/data';
 import Image from 'next/image';
 
-const allNavLinks = [...navLinks, { href: '/faq', label: 'FAQ' }, { href: '/contact', label: 'Contact' }];
+const allNavLinks = [...navLinks, { href: '/faq', label: 'FAQ' }];
 const authNavLinks = [
     { href: '/login', label: 'Login' },
     { href: '/register', label: 'Register' },
