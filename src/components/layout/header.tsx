@@ -10,6 +10,9 @@ import { Menu, X } from 'lucide-react';
 import { navLinks } from '@/lib/data';
 import Image from 'next/image';
 
+const allNavLinks = [...navLinks, { href: '/faq', label: 'FAQ' }];
+
+
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -27,7 +30,7 @@ export default function Header() {
         </div>
         
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
-          {navLinks.map((link) => (
+          {allNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -68,7 +71,7 @@ export default function Header() {
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     <nav className="grid items-start gap-4 px-2 py-6">
-                    {navLinks.map((link) => (
+                    {allNavLinks.map((link) => (
                         <Link
                         key={link.href}
                         href={link.href}
