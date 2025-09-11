@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake, Star, Trophy, Shield, Medal, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const features = [
   {
@@ -297,6 +299,22 @@ export default function Home() {
                     <p className="flex-1 font-medium text-card-foreground">{perk}</p>
                 </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full py-16 md:py-24 lg:py-32 bg-primary">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <h2 className="font-headline text-3xl font-bold tracking-tighter text-primary-foreground sm:text-4xl md:text-5xl">
+            Ready to Make a Difference?
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-primary-foreground/90">
+            Become a delegate and step into the shoes of world leaders. Your voice matters.
+          </p>
+          <div className="mt-8">
+            <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Link href="#">Delegate Login</Link>
+            </Button>
           </div>
         </div>
       </section>
