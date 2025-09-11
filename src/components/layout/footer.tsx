@@ -32,7 +32,7 @@ export default function Footer() {
                     alt="DavRohini MUN Logo"
                     width={40}
                     height={40}
-                    className="h-10 w-10"
+                    className="h-10 w-10 rounded-full"
                   />
                   <div className="flex flex-col">
                       <span className="font-bold font-headline text-lg">

@@ -22,7 +22,7 @@ export default function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6" />
+            <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6 rounded-full" />
             <span className="font-bold font-headline sm:inline-block">
               DavRohini MUN
             </span>
@@ -61,7 +61,7 @@ export default function Header() {
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b pb-6 pr-6">
                   <Link href="/" className="flex items-center space-x-2">
-                    <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6" />
+                    <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6 rounded-full" />
                     <span className="font-bold font-headline">DavRohini MUN</span>
                   </Link>
                 </div>

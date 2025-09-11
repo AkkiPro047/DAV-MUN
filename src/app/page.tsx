@@ -114,7 +114,7 @@ export default function Home() {
               alt="DavRohini MUN Logo"
               width={56}
               height={56}
-              className="h-14 w-14"
+              className="h-14 w-14 rounded-full"
             />
             <div className="text-left">
               <h2 className="font-headline text-2xl font-bold tracking-tight text-foreground">
