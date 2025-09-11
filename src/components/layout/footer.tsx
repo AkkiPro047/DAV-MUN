@@ -15,7 +15,6 @@ const footerNavLinks = [
     { href: '/events', label: 'Schedule' },
     { href: '/committees', label: 'Committees' },
     { href: '/faq', label: 'FAQ' },
-    { href: '/contact', label: 'Contact' },
 ];
 
 export default function Footer() {
