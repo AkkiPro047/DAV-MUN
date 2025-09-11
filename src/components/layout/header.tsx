@@ -6,8 +6,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Globe, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { navLinks } from '@/lib/data';
+import Image from 'next/image';
 
 export default function Header() {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Globe className="h-6 w-6" />
+            <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6" />
             <span className="font-bold font-headline sm:inline-block">
               DavRohini MUN
             </span>
@@ -55,7 +56,7 @@ export default function Header() {
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b pb-6">
                   <Link href="/" className="flex items-center space-x-2">
-                    <Globe className="h-6 w-6" />
+                    <Image src="https://i.postimg.cc/RFcZTyGf/image.png" alt="DavRohini MUN Logo" width={24} height={24} className="h-6 w-6" />
                     <span className="font-bold font-headline">DavRohini MUN</span>
                   </Link>
                   <SheetTrigger asChild>
