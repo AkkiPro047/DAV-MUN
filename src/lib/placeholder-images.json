@@ -1,3 +1,22 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "news-1",
+      "description": "Delegates in discussion at a Model UN conference.",
+      "imageUrl": "https://picsum.photos/seed/mun24/600/400",
+      "imageHint": "delegates conference"
+    },
+    {
+      "id": "news-2",
+      "description": "A student giving a speech at a podium.",
+      "imageUrl": "https://picsum.photos/seed/speech25/600/400",
+      "imageHint": "student speech"
+    },
+    {
+      "id": "news-3",
+      "description": "A group of students receiving an award on stage.",
+      "imageUrl": "https://picsum.photos/seed/award26/600/400",
+      "imageHint": "students award"
+    }
+  ]
 }
