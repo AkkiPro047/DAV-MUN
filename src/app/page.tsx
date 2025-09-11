@@ -1,50 +1,38 @@
 import Image from 'next/image';
-import { newsItems } from '@/lib/data';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-12 md:px-6 lg:py-16">
-      <div className="space-y-4 text-center">
-        <h1 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          News & Updates
-        </h1>
-        <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-          Stay informed with the latest announcements, conference highlights, and delegate achievements from DavRohini MUN.
-        </p>
-      </div>
-
-      <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {newsItems.map((item) => (
-          <Card key={item.id} className="flex flex-col overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl">
-            <div className="relative h-56 w-full">
-               <Image
-                src={item.image.imageUrl}
-                alt={item.title}
-                fill
-                className="object-cover"
-                data-ai-hint={item.image.imageHint}
-              />
+    <div className="flex h-full flex-col">
+      <section className="flex flex-1 items-center justify-center py-24 md:py-32">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <div className="mb-6 flex items-center justify-center space-x-3">
+            <Image
+              src="https://i.postimg.cc/RFcZTyGf/image.png"
+              alt="DavRohini MUN Logo"
+              width={56}
+              height={56}
+              className="h-14 w-14"
+            />
+            <div className="text-left">
+              <h2 className="font-headline text-2xl font-bold tracking-tight text-foreground">
+                DAV Rohini
+              </h2>
+              <p className="text-md text-muted-foreground">
+                Public School MUN
+              </p>
             </div>
-            <CardHeader>
-              <CardTitle className="font-headline text-xl">{item.title}</CardTitle>
-              <CardDescription>{new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <p className="text-muted-foreground">{item.summary}</p>
-            </CardContent>
-            <CardFooter>
-                <Button variant="link" className="p-0 text-primary-foreground/80 hover:text-primary-foreground">
-                  Read More
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+          </div>
+
+          <h1 className="font-headline text-4xl font-extrabold tracking-tighter text-primary sm:text-5xl md:text-6xl lg:text-7xl">
+            Dav Rohini Model United Nations 2025
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
+            A platform for young leaders to debate, deliberate, and design
+            solutions for a better tomorrow. Join us for an unforgettable
+            experience.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
