@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase } from 'lucide-react';
+import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbulb, Handshake } from 'lucide-react';
 
 const features = [
   {
@@ -45,6 +45,21 @@ const aboutFeatures = [
     title: "Real-World Simulation",
     description: "Experience the workings of the United Nations in a realistic and immersive environment."
   }
+];
+
+const aboutDavRohiniMunFeatures = [
+    {
+        icon: Handshake,
+        label: 'Diplomacy'
+    },
+    {
+        icon: Lightbulb,
+        label: 'Innovation'
+    },
+    {
+        icon: Users,
+        label: 'Community'
+    }
 ];
 
 
@@ -139,6 +154,35 @@ export default function Home() {
               })}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+        <div className="container px-4 md:px-6">
+            <div className="bg-card/20 rounded-lg p-8 md:p-12">
+                <div className="flex flex-col items-center justify-center space-y-6 text-center">
+                    <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">About DAV ROHINI MUN</h2>
+                    <div className="max-w-4xl text-muted-foreground md:text-lg/relaxed space-y-4">
+                        <p>
+                        The DAV ROHINI MUN conference is dedicated to providing a comprehensive Model United Nations experience, engaging students in collaborative processes of problem-solving and consensus building. The conference not only provides a platform for young leaders to engage in international diplomacy but also develops their skills in negotiation and problem-solving.
+                        </p>
+                        <p>
+                        By bringing together passionate students from diverse backgrounds, DAV ROHINI MUN creates a dynamic platform for innovation and dialogue, inspiring participants to become proactive, informed global citizens. Join us in shaping a more inclusive and sustainable world through the art of diplomacy and debate.
+                        </p>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-8 pt-6">
+                        {aboutDavRohiniMunFeatures.map((feature, index) => {
+                            const Icon = feature.icon;
+                            return (
+                                <div key={index} className="flex items-center gap-3">
+                                    <Icon className="h-6 w-6 text-primary" />
+                                    <span className="font-semibold text-lg">{feature.label}</span>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            </div>
         </div>
       </section>
     </div>
