@@ -65,9 +65,9 @@ export const conferences = [
       committees: [
         { id: 'uncsw', name: 'United Nations Commission on the Status of Women (UNCSW)', topic: 'Addressing the impact of climate-induced disasters and armed conflicts on the accessibility of reproductive and maternal healthcare services for women in fragile and conflict-affected states.', guideUrl: '#' },
         { id: 'unhrc', name: 'United Nations Human Rights Council (UNHRC)', topic: 'Deliberating on the escalation of authoritarian digital surveillance and its threat to the right to peaceful assembly, political expression, and individual privacy in the age of AI and predictive policing.', guideUrl: '#' },
-        { id: 'unsc', name: 'United Nations Security Council (UNSC)', topic: 'The Situation in the Middle East', guideUrl: '#' },
-        { id: 'disec', name: 'Disarmament and International Security (DISEC)', topic: 'Preventing an Arms Race in Outer Space', guideUrl: '#' },
-        { id: 'who', name: 'World Health Organization (WHO)', topic: 'Global Strategy for Pandemic Preparedness', guideUrl: '#' },
+        { id: 'aippm', name: 'All India Political Parties Meet (AIPPM)', topic: 'Reassessing the balance of power in India’s federal structure: ensuring fiscal autonomy, transparent Centre–State relations, and the constitutional accountability of gubernatorial authority.', guideUrl: '#' },
+        { id: 'ipc', name: 'International Press Corps (IPC)', topic: 'Real-time coverage, investigative journalism & photojournalism. Reporting on all committees, creation of the official post-conference publication, and real-time journalism simulation.', guideUrl: '#' },
+        { id: 'ipl', name: 'IPL Mega Auction (Special Committee)', topic: 'A mock auction simulating strategic team building and franchise management. Budget allocation, player bidding, and application of managerial, economic, and cricket knowledge.', guideUrl: '#' },
       ]
     },
     {

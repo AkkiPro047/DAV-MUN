@@ -1,4 +1,4 @@
-import { ArrowRight, Shield, Users } from "lucide-react";
+import { ArrowRight, Shield, Users, Landmark, Camera, Swords } from "lucide-react";
 import { conferences } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,12 @@ import { Badge } from "@/components/ui/badge";
 const committeeIcons: { [key: string]: React.ElementType } = {
   unsc: Shield,
   disec: Shield,
-  unhrc: Shield,
+  unhrc: Users,
   who: Users,
   uncsw: Users, 
+  aippm: Landmark,
+  ipc: Camera,
+  ipl: Swords,
   'default': Shield
 };
 
