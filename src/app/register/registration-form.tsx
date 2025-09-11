@@ -41,11 +41,11 @@ const formSchema = z.object({
   institution: z.string().min(2, 'Institution name is required.'),
   munExperience: z.coerce.number().min(0, 'MUN experience is required.'),
   committee1: z.string().min(1, 'Please select a committee.'),
-  portfolio1_1: z.string().min(1, 'Portfolio preference is required.'),
-  portfolio1_2: z.string().min(1, 'Alternate portfolio is required.'),
+  portfolio1_1: z.string().min(1, 'Delegate/Country preference is required.'),
+  portfolio1_2: z.string().min(1, 'Alternate Delegate/Country is required.'),
   committee2: z.string().min(1, 'Please select a committee.'),
-  portfolio2_1: z.string().min(1, 'Portfolio preference is required.'),
-  portfolio2_2: z.string().min(1, 'Alternate portfolio is required.'),
+  portfolio2_1: z.string().min(1, 'Delegate/Country preference is required.'),
+  portfolio2_2: z.string().min(1, 'Alternate Delegate/Country is required.'),
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
@@ -215,15 +215,15 @@ export default function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField control={form.control} name="portfolio1_1" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Portfolio Preference 1 *</FormLabel>
-                        <FormControl><Input placeholder="Top portfolio" {...field} /></FormControl>
+                        <FormLabel>Delegate/Country Preference 1 *</FormLabel>
+                        <FormControl><Input placeholder="Top preference" {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
                 <FormField control={form.control} name="portfolio1_2" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Portfolio Preference 2 *</FormLabel>
-                        <FormControl><Input placeholder="Alternate" {...field} /></FormControl>
+                        <FormLabel>Delegate/Country Preference 2 *</FormLabel>
+                        <FormControl><Input placeholder="Alternate preference" {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
@@ -243,15 +243,15 @@ export default function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField control={form.control} name="portfolio2_1" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Portfolio Preference 1 (Pref 2) *</FormLabel>
-                        <FormControl><Input placeholder="Portfolio" {...field} /></FormControl>
+                        <FormLabel>Delegate/Country Preference 1 (for Pref 2) *</FormLabel>
+                        <FormControl><Input placeholder="Top preference" {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
                 <FormField control={form.control} name="portfolio2_2" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Portfolio Preference 2 (Pref 2) *</FormLabel>
-                        <FormControl><Input placeholder="Alternate" {...field} /></FormControl>
+                        <FormLabel>Delegate/Country Preference 2 (for Pref 2) *</FormLabel>
+                        <FormControl><Input placeholder="Alternate preference" {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
