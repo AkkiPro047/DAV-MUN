@@ -1,4 +1,5 @@
 import { Clock, MapPin } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const schedule = [
   {
@@ -28,7 +29,7 @@ const schedule = [
 export default function EventsPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:py-16">
-      <div className="space-y-4 text-center mb-12">
+      <div className="space-y-4 text-center mb-16">
         <h1 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
           Event Schedule
         </h1>
@@ -37,34 +38,41 @@ export default function EventsPage() {
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-3xl mx-auto space-y-16">
         {schedule.map((day) => (
-          <div key={day.day}>
-            <div className="flex items-center mb-8">
-              <div className="flex-shrink-0">
-                <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 font-headline text-lg font-bold text-primary-foreground">
-                  {day.day}
-                </span>
-              </div>
-              <div className="ml-4 border-t border-dashed border-border/70 flex-grow h-px"></div>
-              <div className="ml-4 flex-shrink-0">
-                <span className="font-semibold text-lg text-muted-foreground">{day.date}</span>
-              </div>
-            </div>
+          <div key={day.day} className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-4 top-4 h-[calc(100%_-_2rem)] w-0.5 bg-border/70 -translate-x-1/2" />
 
-            <div className="relative">
-              <div className="absolute left-6 h-full w-0.5 bg-border/70 -translate-x-1/2"></div>
-              {day.events.map((event, index) => (
-                <div key={index} className="relative pl-12 mb-8">
-                   <div className="absolute top-1 left-6 h-3 w-3 bg-primary rounded-full -translate-x-1/2"></div>
-                    <p className="font-mono text-sm text-primary">{event.time}</p>
-                    <h3 className="font-headline text-xl font-semibold mt-1">{event.title}</h3>
-                    <p className="flex items-center mt-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4 mr-2"/>
-                      {event.location}
-                    </p>
+            <div className="relative pl-12 space-y-8">
+                {/* Day Header */}
+                <div>
+                    <div className="absolute top-0 left-4 w-4 h-4 bg-primary rounded-full -translate-x-1/2" />
+                    <h2 className="font-headline text-2xl font-bold">{day.day}</h2>
+                    <p className="text-muted-foreground">{day.date}</p>
                 </div>
-              ))}
+
+                {/* Events */}
+                {day.events.map((event, index) => (
+                    <div key={index} className="relative">
+                        <div className="absolute top-1 left-[-2.1rem] h-3 w-3 bg-primary/70 rounded-full -translate-x-1/2" />
+                        <Card className="bg-card/60">
+                            <CardContent className="p-4 grid grid-cols-[1fr_2fr] items-center gap-4">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono">
+                                    <Clock className="h-4 w-4" />
+                                    <span>{event.time}</span>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-base">{event.title}</h3>
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <MapPin className="h-4 w-4" />
+                                        <span>{event.location}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                ))}
             </div>
           </div>
         ))}
