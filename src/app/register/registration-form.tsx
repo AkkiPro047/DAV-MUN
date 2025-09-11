@@ -291,9 +291,6 @@ export default function RegistrationForm() {
                             <Copy className="h-4 w-4 mr-2" /> Copy
                         </Button>
                     </div>
-                     <Button type="button" size="sm" variant="secondary" onClick={() => copyToClipboard('9811588040@pytm')}>
-                        <Copy className="h-4 w-4 mr-2" /> Copy 9811588040@pytm
-                    </Button>
                     <FormMessage />
                 </FormItem>
             )}/>
