@@ -16,8 +16,6 @@ const formSchema = z.object({
   portfolio1_1: z.string(),
   portfolio1_2: z.string(),
   committee2: z.string(),
-  portfolio2_1: z.string(),
-  portfolio2_2: z.string(),
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),

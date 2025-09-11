@@ -44,8 +44,6 @@ const formSchema = z.object({
   portfolio1_1: z.string().min(1, 'Delegate/Country preference is required.'),
   portfolio1_2: z.string().min(1, 'Alternate Delegate/Country is required.'),
   committee2: z.string().min(1, 'Please select a committee.'),
-  portfolio2_1: z.string().min(1, 'Delegate/Country preference is required.'),
-  portfolio2_2: z.string().min(1, 'Alternate Delegate/Country is required.'),
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
@@ -73,8 +71,6 @@ export default function RegistrationForm() {
       portfolio1_1: '',
       portfolio1_2: '',
       committee2: '',
-      portfolio2_1: '',
-      portfolio2_2: '',
       questions: '',
       reference: '',
       paymentMethod: 'upi',
@@ -240,22 +236,6 @@ export default function RegistrationForm() {
                     <FormMessage />
                 </FormItem>
             )}/>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="portfolio2_1" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Delegate/Country Preference 1 (for Pref 2) *</FormLabel>
-                        <FormControl><Input placeholder="Top preference" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="portfolio2_2" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Delegate/Country Preference 2 (for Pref 2) *</FormLabel>
-                        <FormControl><Input placeholder="Alternate preference" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-            </div>
             <FormField control={form.control} name="questions" render={({ field }) => (
                 <FormItem>
                     <FormLabel>Any questions (optional)</FormLabel>
