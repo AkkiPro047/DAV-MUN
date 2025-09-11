@@ -3,7 +3,7 @@ import { BookText, FileText, Link as LinkIcon, Library, Globe, CalendarDays, Mai
 
 export const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/events', label: 'Events' },
+  { href: '/events', label: 'Schedule' },
   { href: '/committees', label: 'Committees' },
   { href: '/resources', label: 'Resources' },
   { href: '/contact', label: 'Contact' },
