@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gavel, Globe, Users, MessageSquare } from 'lucide-react';
+import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase } from 'lucide-react';
 
 const features = [
   {
@@ -23,6 +23,30 @@ const features = [
     description: 'Stay updated with real-time announcements and schedule changes.',
   },
 ];
+
+const aboutFeatures = [
+  {
+    icon: Users,
+    title: "Debate & Diplomacy",
+    description: "Engage in lively debates, practice diplomacy, and form alliances to address global challenges."
+  },
+  {
+    icon: BookOpen,
+    title: "Research & Analysis",
+    description: "Dive deep into research on different countries and complex international issues."
+  },
+  {
+    icon: Award,
+    title: "Skill Development",
+    description: "Sharpen your public speaking, critical thinking, and problem-solving abilities."
+  },
+  {
+    icon: Briefcase,
+    title: "Real-World Simulation",
+    description: "Experience the workings of the United Nations in a realistic and immersive environment."
+  }
+];
+
 
 export default function Home() {
   return (
@@ -83,6 +107,37 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+      
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-card/20">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="space-y-4">
+              <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">
+                What is a Model United Nations?
+              </h2>
+              <p className="text-muted-foreground md:text-lg">
+                Model United Nations (MUN) is an educational simulation where students act as delegates from different countries. They tackle real-world issues through research, debate, and diplomacy, aiming to find solutions through collaboration and consensus-building. This immersive experience hones public speaking, research, critical thinking, and teamwork skills, while fostering global awareness.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-6">
+              {aboutFeatures.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <div key={index} className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold font-headline">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
