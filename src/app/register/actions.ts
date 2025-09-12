@@ -1,6 +1,10 @@
 'use server';
 
 import * as z from 'zod';
+import { db, storage } from '@/lib/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { randomUUID } from 'crypto';
 
 const formSchema = z.object({
   fullName: z.string(),
@@ -19,34 +23,60 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  paymentScreenshot: z.any(),
 });
 
 type FormState = {
   success: boolean;
   message?: string;
+  trackingId?: string;
 };
 
 export async function handleRegistrationForm(
-  data: z.infer<typeof formSchema>
+  prevState: FormState,
+  formData: FormData
 ): Promise<FormState> {
-  const validation = formSchema.safeParse(data);
+  const rawData = Object.fromEntries(formData.entries());
+  
+  const validation = formSchema.safeParse(rawData);
 
   if (!validation.success) {
     console.error("Form validation failed:", validation.error.flatten().fieldErrors);
     return { success: false, message: 'Invalid form data. Please check your entries.' };
   }
   
-  // In a real application, you would:
-  // 1. Upload the paymentScreenshot to a file storage (like Firebase Storage).
-  // 2. Get the URL of the uploaded file.
-  // 3. Save the form data, including the file URL, to a database (like Firestore).
-  
-  console.log('Received registration submission:', validation.data);
-  
-  // Simulate network delay for processing
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // For this example, we'll just return a success message.
-  return { success: true };
+  const paymentScreenshot = formData.get('paymentScreenshot') as File;
+  if (!paymentScreenshot || paymentScreenshot.size === 0) {
+      return { success: false, message: 'Payment screenshot is required.' };
+  }
+
+  try {
+    // 1. Upload the paymentScreenshot to Firebase Storage
+    const fileExtension = paymentScreenshot.name.split('.').pop();
+    const fileName = `${randomUUID()}.${fileExtension}`;
+    const storageRef = ref(storage, `payment_screenshots/${fileName}`);
+    const fileBuffer = Buffer.from(await paymentScreenshot.arrayBuffer());
+    
+    await uploadBytes(storageRef, fileBuffer, {
+        contentType: paymentScreenshot.type,
+    });
+
+    // 2. Get the URL of the uploaded file.
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // 3. Save the form data, including the file URL, to a database (like Firestore).
+    const docRef = await addDoc(collection(db, 'registrations'), {
+        ...validation.data,
+        paymentScreenshotUrl: downloadURL,
+        status: 'pending', // Initial status
+        createdAt: serverTimestamp(),
+    });
+
+    console.log('Registration submitted with ID:', docRef.id);
+
+    return { success: true, trackingId: docRef.id };
+
+  } catch (error) {
+    console.error("Error processing registration:", error);
+    return { success: false, message: 'An unexpected error occurred. Please try again.' };
+  }
 }

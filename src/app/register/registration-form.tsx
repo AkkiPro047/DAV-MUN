@@ -1,5 +1,6 @@
 'use client';
 
+import { useFormState, useFormStatus } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -17,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { handleRegistrationForm } from './actions';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Copy, Loader2, Upload } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -29,6 +30,15 @@ import {
 } from '@/components/ui/select';
 import Image from 'next/image';
 import { conferences } from '@/lib/data';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 const formSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -37,7 +47,7 @@ const formSchema = z.object({
   whatsappNumber: z.string().min(10, 'Please enter a valid WhatsApp number.'),
   altContactNumber: z.string().min(10, 'Alternate contact number is required.'),
   age: z.coerce.number().min(1, 'Age is required.'),
-  grade: z.coerce.number().min(1, 'Grade is required.'),
+  grade: zcoerce.number().min(1, 'Grade is required.'),
   institution: z.string().min(2, 'Institution name is required.'),
   munExperience: z.coerce.number().min(0, 'MUN experience is required.'),
   committee1: z.string().min(1, 'Please select a committee.'),
@@ -50,10 +60,29 @@ const formSchema = z.object({
   paymentScreenshot: z.any().refine(files => files?.length == 1, 'Payment screenshot is required.'),
 });
 
+
+const SubmitButton = () => {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" size="lg" disabled={pending}>
+            {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Submit Registration
+        </Button>
+    );
+};
+
+
 export default function RegistrationForm() {
   const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
   const [preview, setPreview] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [trackingId, setTrackingId] = useState('');
+  
+  const formRef = useRef<HTMLFormElement>(null);
+  
+  const [formState, formAction] = useFormState(handleRegistrationForm, {
+    success: false,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,42 +107,42 @@ export default function RegistrationForm() {
     },
   });
 
+  useEffect(() => {
+    if (formState.message && !formState.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: formState.message,
+      });
+    }
+
+    if (formState.success && formState.trackingId) {
+      toast({
+        title: 'Registration Successful!',
+        description: "We've received your registration.",
+      });
+      setTrackingId(formState.trackingId);
+      setShowSuccessDialog(true);
+      form.reset();
+      setPreview(null);
+      formRef.current?.reset();
+    }
+  }, [formState, toast, form]);
+
+
   const upiId = 'placeholder@fam';
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: 'Copied to clipboard!', description: text });
   };
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    startTransition(async () => {
-        // Here you would typically upload the file to a storage service
-        // and get back a URL. For now, we'll just log it.
-        console.log("Form values:", values);
-        console.log("Uploaded file:", values.paymentScreenshot[0]);
-
-      const result = await handleRegistrationForm(values);
-
-      if (result.success) {
-        toast({
-          title: 'Registration Successful!',
-          description: "We've received your registration and will be in touch shortly.",
-        });
-        form.reset();
-        setPreview(null);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Uh oh! Something went wrong.',
-          description: result.message || 'There was a problem with your submission.',
-        });
-      }
-    });
-  }
+  
+  const { pending } = useFormStatus();
 
   return (
+    <>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form ref={formRef} action={formAction} className="space-y-8">
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
@@ -202,7 +231,7 @@ export default function RegistrationForm() {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
-                            {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                            {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -230,7 +259,7 @@ export default function RegistrationForm() {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
-                            {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                             {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -265,7 +294,7 @@ export default function RegistrationForm() {
                     <FormLabel>Payment Method *</FormLabel>
                     <div className="relative">
                         <FormControl>
-                            <Input value={`UPI: ${upiId}`} readOnly />
+                            <Input value={`UPI: ${upiId}`} readOnly name={field.name} />
                         </FormControl>
                         <Button type="button" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" onClick={() => copyToClipboard(upiId)}>
                             <Copy className="h-4 w-4 mr-2" /> Copy
@@ -278,7 +307,7 @@ export default function RegistrationForm() {
                 <FormField
                 control={form.control}
                 name="paymentScreenshot"
-                render={({ field }) => (
+                render={({ field: { onChange, value, ...rest }}) => (
                     <FormItem>
                     <FormLabel>Upload Payment Screenshot *</FormLabel>
                     <FormControl>
@@ -287,10 +316,14 @@ export default function RegistrationForm() {
                                 type="file" 
                                 accept="image/png, image/jpeg, image/webp"
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                {...rest}
                                 onChange={(e) => {
-                                    field.onChange(e.target.files);
-                                    if (e.target.files && e.target.files[0]) {
-                                        setPreview(URL.createObjectURL(e.target.files[0]));
+                                    const file = e.target.files?.[0];
+                                    onChange(e.target.files);
+                                    if (file) {
+                                        setPreview(URL.createObjectURL(file));
+                                    } else {
+                                        setPreview(null);
                                     }
                                 }}
                             />
@@ -330,11 +363,8 @@ export default function RegistrationForm() {
                 </FormDescription>
             </CardHeader>
             <CardContent className="flex items-center gap-4">
-                 <Button type="submit" size="lg" disabled={isPending}>
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Submit Registration
-                </Button>
-                <Button type="button" variant="outline" size="lg" onClick={() => console.log("Draft saved!")} disabled={isPending}>
+                 <SubmitButton />
+                <Button type="button" variant="outline" size="lg" onClick={() => console.log("Draft saved!")} disabled={pending}>
                     Save Draft
                 </Button>
             </CardContent>
@@ -342,5 +372,25 @@ export default function RegistrationForm() {
 
       </form>
     </Form>
+    <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Registration Submitted!</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your registration has been received. Please save your tracking ID to check your application status.
+              <div className="mt-4 bg-muted p-3 rounded-md">
+                <p className="font-mono text-sm text-foreground break-all">{trackingId}</p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => copyToClipboard(trackingId)}>
+                <Copy className="mr-2 h-4 w-4" /> Copy ID
+            </Button>
+            <AlertDialogAction onClick={() => setShowSuccessDialog(false)}>Close</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
