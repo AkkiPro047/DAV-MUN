@@ -141,7 +141,7 @@ export default function Home() {
               <Link href="/register">Register</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link href="/login">Login</Link>
+              <Link href="/login">Delegate Login</Link>
             </Button>
              <Button asChild size="lg" variant="outline">
                 <Link href="/track-submission">Track Submission</Link>
@@ -217,7 +217,7 @@ export default function Home() {
                     <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-4xl md:text-5xl">About DAV ROHINI MUN</h2>
                     <div className="max-w-4xl text-muted-foreground md:text-lg/relaxed space-y-4">
                         <p>
-                        The DAV ROHINI MUN conference is dedicated to providing a comprehensive Model United Nations experience, engaging students in collaborative processes of problem-solving and consensus building. The conference not only provides a platform for young leaders to engage in international diplomacy but also develops their skills in negotiation and problem-solving.
+                        The DAV ROHINI MUN conference is dedicated to providing a comprehensive Model United Nations experience, engaging students in collaborative processes of problem-solving and consensus-building. The conference not only provides a platform for young leaders to engage in international diplomacy but also develops their skills in negotiation and problem-solving.
                         </p>
                         <p>
                         By bringing together passionate students from diverse backgrounds, DAV ROHINI MUN creates a dynamic platform for innovation and dialogue, inspiring participants to become proactive, informed global citizens. Join us in shaping a more inclusive and sustainable world through the art of diplomacy and debate.

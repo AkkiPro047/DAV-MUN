@@ -6,20 +6,31 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Crown } from 'lucide-react';
 import { navLinks } from '@/lib/data';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
+import { ADMIN_UID } from '@/lib/constants';
 
 const allNavLinks = [...navLinks, { href: '/faq', label: 'FAQ' }];
-const authNavLinks = [
-    { href: '/login', label: 'Login' },
-    { href: '/register', label: 'Register' },
-    { href: '/track-submission', label: 'Track Submission' },
-];
 
 export default function Header() {
   const pathname = usePathname();
+  const { user, logout, authLoading } = useAuth();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isAdmin = user?.uid === ADMIN_UID;
+
+  const authNavLinks = user
+    ? [
+        ...(isAdmin ? [{ href: '/admin', label: 'Admin', variant: 'destructive' as const }] : []),
+        { href: '#', label: 'Logout', onClick: logout, variant: 'outline' as const },
+      ]
+    : [
+        { href: '/login', label: 'Login', variant: 'outline' as const },
+        { href: '/register', label: 'Register', variant: 'default' as const },
+        { href: '/track-submission', label: 'Track Submission', variant: 'outline' as const },
+      ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,8 +62,17 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="hidden items-center gap-2 md:flex">
              {authNavLinks.map((link) => (
-                <Button key={link.href} asChild variant={link.label === 'Register' ? 'default' : 'outline'} size="sm">
-                    <Link href={link.href}>{link.label}</Link>
+                <Button key={link.label} asChild={!link.onClick} variant={link.variant || 'outline'} size="sm" onClick={link.onClick}>
+                    {!link.onClick ? (
+                      <Link href={link.href}>
+                        {link.label === 'Admin' && <Crown className="mr-2 h-4 w-4" />}
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <>
+                        {link.label}
+                      </>
+                    )}
                 </Button>
             ))}
           </div>
@@ -81,15 +101,19 @@ export default function Header() {
                     <nav className="grid items-start gap-4 px-2 py-6">
                     {[...allNavLinks, ...authNavLinks].map((link) => (
                         <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                            'flex items-center rounded-md px-3 py-2 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                            pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                        )}
+                          key={link.label}
+                          href={link.href}
+                          onClick={() => {
+                            if (link.onClick) link.onClick();
+                            setMobileMenuOpen(false)
+                          }}
+                          className={cn(
+                              'flex items-center rounded-md px-3 py-2 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                              pathname === link.href ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                          )}
                         >
-                        {link.label}
+                          {link.label === 'Admin' && <Crown className="mr-2 h-4 w-4" />}
+                          {link.label}
                         </Link>
                     ))}
                     </nav>
