@@ -22,7 +22,7 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  paymentScreenshot: z.any(),
+  // paymentScreenshot is handled via FormData directly
 });
 
 type FormState = {
@@ -36,7 +36,7 @@ export async function handleRegistrationForm(
   formData: FormData
 ): Promise<FormState> {
   const rawData = Object.fromEntries(formData.entries());
-  
+
   const paymentScreenshot = formData.get('paymentScreenshot') as File;
   if (!paymentScreenshot || paymentScreenshot.size === 0) {
       return { success: false, message: 'Payment screenshot is required.' };
