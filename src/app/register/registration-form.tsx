@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useActionState, useEffect, useState, useRef, useTransition } from 'react';
+import { useActionState, useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -323,11 +323,11 @@ export default function RegistrationForm() {
             <AlertDialogTitle>Registration Submitted!</AlertDialogTitle>
             <AlertDialogDescription>
               Your registration has been received. Please save your tracking ID to check your application status.
-              <div className="mt-4 bg-muted p-3 rounded-md">
-                <p className="font-mono text-sm text-foreground break-all">{trackingId}</p>
-              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="mt-4 bg-muted p-3 rounded-md">
+            <p className="font-mono text-sm text-foreground break-all">{trackingId}</p>
+          </div>
           <AlertDialogFooter>
             <Button variant="outline" onClick={() => copyToClipboard(trackingId)}>
                 <Copy className="mr-2 h-4 w-4" /> Copy ID
@@ -339,5 +339,3 @@ export default function RegistrationForm() {
     </>
   );
 }
-
-    
