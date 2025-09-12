@@ -278,10 +278,13 @@ export default function RegistrationForm() {
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter II: Preferences</CardTitle></CardHeader>
           <CardContent className="space-y-6">
-            <FormField control={form.control} name="committee1" render={({ field }) => (
+            <FormField
+              control={form.control}
+              name="committee1"
+              render={({ field }) => (
                 <FormItem>
                     <FormLabel>Committee Preference 1 *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
                             {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
@@ -289,7 +292,8 @@ export default function RegistrationForm() {
                     </Select>
                     <FormMessage />
                 </FormItem>
-            )}/>
+              )}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField control={form.control} name="portfolio1_1" render={({ field }) => (
                     <FormItem>
@@ -306,10 +310,13 @@ export default function RegistrationForm() {
                     </FormItem>
                 )}/>
             </div>
-            <FormField control={form.control} name="committee2" render={({ field }) => (
+            <FormField
+              control={form.control}
+              name="committee2"
+              render={({ field }) => (
                 <FormItem>
                     <FormLabel>Committee Preference 2 *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
                              {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
