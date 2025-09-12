@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/lib/firebase';
-import { collection, getDocs, orderBy, query, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { initializeAdmin } from '@/lib/firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
 
 export type Registration = {
   id: string;
@@ -16,9 +16,11 @@ export type Registration = {
 };
 
 export async function getRegistrations(): Promise<Registration[]> {
-  const registrationsRef = collection(db, 'registrations');
-  const q = query(registrationsRef, orderBy('createdAt', 'desc'));
-  const querySnapshot = await getDocs(q);
+  const adminApp = initializeAdmin();
+  const db = getFirestore(adminApp);
+  const registrationsRef = db.collection('registrations');
+  const q = registrationsRef.orderBy('createdAt', 'desc');
+  const querySnapshot = await q.get();
 
   return querySnapshot.docs.map(doc => {
     const data = doc.data();
@@ -37,8 +39,10 @@ export async function getRegistrations(): Promise<Registration[]> {
 
 export async function updateRegistrationStatus(id: string, status: 'pending' | 'approved' | 'rejected'): Promise<{success: boolean}> {
     try {
-        const docRef = doc(db, 'registrations', id);
-        await updateDoc(docRef, { status });
+        const adminApp = initializeAdmin();
+        const db = getFirestore(adminApp);
+        const docRef = db.collection('registrations').doc(id);
+        await docRef.update({ status });
         return { success: true };
     } catch (error) {
         console.error("Failed to update status:", error);
@@ -48,8 +52,10 @@ export async function updateRegistrationStatus(id: string, status: 'pending' | '
 
 export async function deleteRegistration(id: string): Promise<{success: boolean}> {
     try {
-        const docRef = doc(db, 'registrations', id);
-        await deleteDoc(docRef);
+        const adminApp = initializeAdmin();
+        const db = getFirestore(adminApp);
+        const docRef = db.collection('registrations').doc(id);
+        await docRef.delete();
         return { success: true };
     } catch (error) {
         console.error("Failed to delete registration:", error);

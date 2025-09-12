@@ -7,15 +7,15 @@ function initializeAdmin(): App {
     return apps[0];
   }
 
-  // These variables are automatically set by the App Hosting environment.
-  const serviceAccount = {
+  // Fallback to environment variables if service account JSON is not available
+  const credential = admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  }
+  });
 
   return initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential,
     databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
     storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
   });
