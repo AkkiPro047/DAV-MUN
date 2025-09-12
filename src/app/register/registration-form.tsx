@@ -189,7 +189,14 @@ export default function RegistrationForm() {
                 <FormField control={form.control} name="altContactNumber" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Alternate Contact Number *</FormLabel>
-                        <FormControl><Input placeholder="Required" {...field} /></FormControl>
+                        <FormControl>
+                            <div className="flex items-center">
+                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-background text-sm text-muted-foreground h-10">
+                                +91
+                                </span>
+                                <Input placeholder="9XXXXXXXXX" className="rounded-l-none" {...field} />
+                            </div>
+                        </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
