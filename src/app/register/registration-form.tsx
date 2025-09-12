@@ -47,7 +47,7 @@ const formSchema = z.object({
   whatsappNumber: z.string().min(10, 'Please enter a valid WhatsApp number.'),
   altContactNumber: z.string().min(10, 'Alternate contact number is required.'),
   age: z.coerce.number().min(1, 'Age is required.'),
-  grade: zcoerce.number().min(1, 'Grade is required.'),
+  grade: z.coerce.number().min(1, 'Grade is required.'),
   institution: z.string().min(2, 'Institution name is required.'),
   munExperience: z.coerce.number().min(0, 'MUN experience is required.'),
   committee1: z.string().min(1, 'Please select a committee.'),
@@ -92,8 +92,8 @@ export default function RegistrationForm() {
       altEmail: '',
       whatsappNumber: '',
       altContactNumber: '',
-      age: undefined,
-      grade: undefined,
+      age: '' as any,
+      grade: '' as any,
       institution: '',
       munExperience: 0,
       committee1: '',
@@ -394,3 +394,5 @@ export default function RegistrationForm() {
     </>
   );
 }
+
+    
