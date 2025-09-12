@@ -181,12 +181,7 @@ export default function RegistrationForm() {
   return (
     <>
     <Form {...form}>
-      <form ref={formRef} action={formAction} className="space-y-8" onSubmit={form.handleSubmit(() => {
-        if(formRef.current) {
-          const formData = new FormData(formRef.current);
-          formAction(formData);
-        }
-      })}>
+      <form ref={formRef} action={formAction} className="space-y-8">
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
@@ -459,5 +454,3 @@ export default function RegistrationForm() {
     </>
   );
 }
-
-    
