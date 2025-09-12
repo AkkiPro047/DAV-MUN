@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -80,7 +81,7 @@ export default function RegistrationForm() {
   
   const formRef = useRef<HTMLFormElement>(null);
   
-  const [formState, formAction] = useFormState(handleRegistrationForm, {
+  const [formState, formAction] = useActionState(handleRegistrationForm, {
     success: false,
   });
 
@@ -394,5 +395,3 @@ export default function RegistrationForm() {
     </>
   );
 }
-
-    
