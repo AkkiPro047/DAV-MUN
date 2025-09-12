@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { handleRegistrationForm } from './actions';
+import { handleRegistrationForm, uploadImageToImgBB } from './actions';
 import { Copy, Loader2, Upload } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -58,7 +58,7 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  // paymentScreenshot is handled by the form action directly, not RHF
+  paymentScreenshotUrl: z.string().url('A valid payment screenshot is required.'),
 });
 
 
@@ -78,6 +78,7 @@ export default function RegistrationForm() {
   const [preview, setPreview] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [trackingId, setTrackingId] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -104,6 +105,7 @@ export default function RegistrationForm() {
       questions: '',
       reference: '',
       paymentMethod: 'upi',
+      paymentScreenshotUrl: '',
     },
   });
 
@@ -112,9 +114,10 @@ export default function RegistrationForm() {
     if (savedDraft) {
       try {
         const draftData = JSON.parse(savedDraft);
-        // Don't set file input value from local storage
-        const { paymentScreenshot, ...restData } = draftData;
-        form.reset(restData);
+        form.reset(draftData);
+        if (draftData.paymentScreenshotUrl) {
+            setPreview(draftData.paymentScreenshotUrl);
+        }
         toast({
           title: 'Draft Loaded',
           description: 'Your previously saved draft has been loaded.',
@@ -174,6 +177,37 @@ export default function RegistrationForm() {
         });
     }
   };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPreview(URL.createObjectURL(file));
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const result = await uploadImageToImgBB(formData);
+
+    setIsUploading(false);
+
+    if (result.success && result.url) {
+        form.setValue('paymentScreenshotUrl', result.url, { shouldValidate: true });
+        toast({
+            title: 'Image Uploaded!',
+            description: 'Your payment screenshot is ready.',
+        });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Upload Failed',
+            description: result.message || 'Could not upload the image.',
+        });
+        form.setValue('paymentScreenshotUrl', '', { shouldValidate: true });
+        setPreview(null);
+    }
+  };
   
   const { pending } = useFormStatus();
 
@@ -181,6 +215,7 @@ export default function RegistrationForm() {
     <>
     <Form {...form}>
       <form ref={formRef} action={formAction} className="space-y-8">
+         <input type="hidden" {...form.register('paymentScreenshotUrl')} />
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
@@ -363,39 +398,40 @@ export default function RegistrationForm() {
                 </FormItem>
             )}/>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <FormItem>
-                    <FormLabel>Upload Payment Screenshot *</FormLabel>
-                    <FormControl>
-                        <div className="relative">
-                            <Input 
-                                type="file"
-                                name="paymentScreenshot"
-                                accept="image/png, image/jpeg, image/webp"
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                        setPreview(URL.createObjectURL(file));
-                                    } else {
-                                        setPreview(null);
-                                    }
-                                }}
-                            />
-                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center">
-                                {preview ? (
-                                    <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md" />
-                                ) : (
-                                    <div className="space-y-2">
-                                        <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
-                                        <p className="text-muted-foreground">Click to choose file</p>
-                                        <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
+                <FormField
+                    control={form.control}
+                    name="paymentScreenshotUrl"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Upload Payment Screenshot *</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <Input 
+                                        type="file"
+                                        accept="image/png, image/jpeg, image/webp"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        onChange={handleFileChange}
+                                        disabled={isUploading}
+                                    />
+                                    <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
+                                        {isUploading ? (
+                                            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                                        ) : preview ? (
+                                            <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md object-contain max-h-[150px]" />
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                                                <p className="text-muted-foreground">Click to choose file</p>
+                                                <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </div>
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <div className="flex flex-col items-center">
                     <p className="font-semibold mb-2">Scan UPI QR</p>
                     <Image src="https://i.postimg.cc/d1grCj2z/qr-code.png" alt="UPI QR Code" width={150} height={150} className="rounded-md border p-1" />
@@ -445,5 +481,3 @@ export default function RegistrationForm() {
     </>
   );
 }
-
-    

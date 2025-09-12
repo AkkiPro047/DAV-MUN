@@ -22,7 +22,7 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  // paymentScreenshot is handled via FormData directly
+  paymentScreenshotUrl: z.string().url('A valid payment screenshot is required.'),
 });
 
 type FormState = {
@@ -37,11 +37,6 @@ export async function handleRegistrationForm(
 ): Promise<FormState> {
   const rawData = Object.fromEntries(formData.entries());
 
-  const paymentScreenshot = formData.get('paymentScreenshot') as File;
-  if (!paymentScreenshot || paymentScreenshot.size === 0) {
-      return { success: false, message: 'Payment screenshot is required.' };
-  }
-
   const validation = formSchema.safeParse(rawData);
 
   if (!validation.success) {
@@ -49,43 +44,14 @@ export async function handleRegistrationForm(
     return { success: false, message: 'Invalid form data. Please check your entries.' };
   }
 
-  let downloadURL = '';
-
   try {
-    // 1. Upload the paymentScreenshot to ImgBB
-    const imgbbApiKey = 'bdb9d0f4b094582a0aac9675b4ac1928';
-    const imgbbFormData = new FormData();
-    imgbbFormData.append('image', paymentScreenshot);
-
-    const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
-      method: 'POST',
-      body: imgbbFormData,
-    });
-
-    if (!imgbbResponse.ok) {
-        const errorData = await imgbbResponse.json();
-        console.error('ImgBB upload failed:', errorData);
-        throw new Error(`Image upload failed: ${errorData.error.message}`);
-    }
-
-    const imgbbResult = await imgbbResponse.json();
-    downloadURL = imgbbResult.data.url;
-
-    if (!downloadURL) {
-        throw new Error('Could not get image URL from ImgBB.');
-    }
-
-    // 2. Save the form data, including the file URL, to Firestore.
-    const { paymentScreenshot: _, ...formDataToSave } = validation.data;
     const docRef = await addDoc(collection(db, 'registrations'), {
-        ...formDataToSave,
-        paymentScreenshotUrl: downloadURL,
+        ...validation.data,
         status: 'pending', // Initial status
         createdAt: serverTimestamp(),
     });
 
     console.log('Registration submitted with ID:', docRef.id);
-
     return { success: true, trackingId: docRef.id };
 
   } catch (error) {
@@ -93,4 +59,47 @@ export async function handleRegistrationForm(
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.';
     return { success: false, message: errorMessage };
   }
+}
+
+type UploadState = {
+    success: boolean;
+    message?: string;
+    url?: string;
+};
+
+export async function uploadImageToImgBB(formData: FormData): Promise<UploadState> {
+    const imageFile = formData.get('image') as File;
+    if (!imageFile) {
+        return { success: false, message: 'No image file found.' };
+    }
+
+    try {
+        const imgbbApiKey = 'bdb9d0f4b094582a0aac9675b4ac1928';
+        const imgbbFormData = new FormData();
+        imgbbFormData.append('image', imageFile);
+
+        const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+            method: 'POST',
+            body: imgbbFormData,
+        });
+
+        if (!imgbbResponse.ok) {
+            const errorData = await imgbbResponse.json();
+            console.error('ImgBB upload failed:', errorData);
+            throw new Error(`Image upload failed: ${errorData.error.message}`);
+        }
+
+        const imgbbResult = await imgbbResponse.json();
+        const downloadURL = imgbbResult.data.url;
+
+        if (!downloadURL) {
+            throw new Error('Could not get image URL from ImgBB.');
+        }
+
+        return { success: true, url: downloadURL };
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred during image upload.';
+        return { success: false, message: errorMessage };
+    }
 }
