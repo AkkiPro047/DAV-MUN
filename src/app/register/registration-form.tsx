@@ -60,6 +60,14 @@ export default function RegistrationForm() {
       });
       setTrackingId(formState.trackingId);
       setShowSuccessDialog(true);
+      
+      // Store tracking ID in local storage
+      const storedIds = JSON.parse(localStorage.getItem('trackingIds') || '[]');
+      if (!storedIds.includes(formState.trackingId)) {
+        storedIds.push(formState.trackingId);
+        localStorage.setItem('trackingIds', JSON.stringify(storedIds));
+      }
+
       formRef.current?.reset();
       setPreview(null);
       setPaymentScreenshotUrl('');
@@ -250,7 +258,7 @@ export default function RegistrationForm() {
           </CardHeader>
           <CardContent className="space-y-6">
              <div className="space-y-2">
-                <Label htmlFor="paymentMethod">Payment Method *</Label>
+                <Label>Payment Method *</Label>
                 <div className="relative">
                     <Input id="paymentMethod" name="paymentMethod" value={`UPI: ${upiId}`} readOnly />
                     <Button type="button" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" onClick={() => copyToClipboard(upiId)}>
@@ -306,8 +314,8 @@ export default function RegistrationForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex items-center gap-4">
-                 <Button type="submit" size="lg" disabled={isPending}>
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                 <Button type="submit" size="lg" disabled={isPending || isUploading}>
+                    {(isPending || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Submit Registration
                 </Button>
                 <Button type="button" variant="outline" size="lg" onClick={handleSaveDraft} disabled={isPending}>
@@ -339,3 +347,5 @@ export default function RegistrationForm() {
     </>
   );
 }
+
+    
