@@ -1,11 +1,7 @@
 
 'use client';
 
-import { useActionState, useEffect, useState, useRef } from 'react';
-import { useFormStatus } from 'react-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useActionState, useEffect, useState, useRef, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -41,31 +37,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-const formSchema = z.object({
-  fullName: z.string().min(2, 'Full name is required.'),
-  email: z.string().email('Please enter a valid email.'),
-  altEmail: z.string().email('Please enter a valid alternate email.'),
-  whatsappNumber: z.string().min(10, 'Please enter a valid WhatsApp number.'),
-  altContactNumber: z.string().min(10, 'Alternate contact number is required.'),
-  age: z.coerce.number().min(1, 'Age is required.'),
-  grade: z.coerce.number().min(1, 'Grade is required.'),
-  institution: z.string().min(2, 'Institution name is required.'),
-  munExperience: z.coerce.number().min(0, 'MUN experience is required.'),
-  committee1: z.string().min(1, 'Please select a committee.'),
-  portfolio1_1: z.string().min(1, 'Delegate/Country preference is required.'),
-  portfolio1_2: z.string().min(1, 'Alternate Delegate/Country is required.'),
-  committee2: z.string().min(1, 'Please select a committee.'),
-  questions: z.string().optional(),
-  reference: z.string().optional(),
-  paymentMethod: z.string(),
-});
-
-
 const SubmitButton = () => {
-    const { pending } = useFormStatus();
+    const [isPending, startTransition] = useTransition();
     return (
-        <Button type="submit" size="lg" disabled={pending}>
-            {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button type="submit" size="lg" disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Submit Registration
         </Button>
     );
@@ -85,48 +61,8 @@ export default function RegistrationForm() {
   const [formState, formAction] = useActionState(handleRegistrationForm, {
     success: false,
   });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      altEmail: '',
-      whatsappNumber: '',
-      altContactNumber: '',
-      age: '' as any,
-      grade: '' as any,
-      institution: '',
-      munExperience: 0,
-      committee1: '',
-      portfolio1_1: '',
-      portfolio1_2: '',
-      committee2: '',
-      questions: '',
-      reference: '',
-      paymentMethod: 'upi',
-    },
-  });
-
-  useEffect(() => {
-    const savedDraft = localStorage.getItem('registrationDraft');
-    if (savedDraft) {
-      try {
-        const draftData = JSON.parse(savedDraft);
-        form.reset(draftData.formData);
-        if (draftData.paymentScreenshotUrl) {
-            setPreview(draftData.paymentScreenshotUrl);
-            setPaymentScreenshotUrl(draftData.paymentScreenshotUrl);
-        }
-        toast({
-          title: 'Draft Loaded',
-          description: 'Your previously saved draft has been loaded.',
-        });
-      } catch (error) {
-        console.error("Failed to parse draft from local storage", error);
-      }
-    }
-  }, [form, toast]);
+  
+  const [isPending, startTransition] = useTransition();
 
 
   useEffect(() => {
@@ -145,13 +81,12 @@ export default function RegistrationForm() {
       });
       setTrackingId(formState.trackingId);
       setShowSuccessDialog(true);
-      form.reset();
+      formRef.current?.reset();
       setPreview(null);
       setPaymentScreenshotUrl('');
-      formRef.current?.reset();
       localStorage.removeItem('registrationDraft');
     }
-  }, [formState, toast, form]);
+  }, [formState, toast]);
 
 
   const upiId = 'placeholder@fam';
@@ -159,28 +94,6 @@ export default function RegistrationForm() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: 'Copied to clipboard!', description: text });
-  };
-
-  const saveDraft = () => {
-    try {
-        const currentValues = form.getValues();
-        const draft = {
-            formData: currentValues,
-            paymentScreenshotUrl: paymentScreenshotUrl
-        };
-        localStorage.setItem('registrationDraft', JSON.stringify(draft));
-        toast({
-            title: 'Draft Saved!',
-            description: 'Your registration progress has been saved locally.',
-        });
-    } catch (error) {
-        console.error("Failed to save draft to local storage", error);
-        toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'Could not save your draft.',
-        });
-    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,103 +127,79 @@ export default function RegistrationForm() {
     }
   };
   
-  const { pending } = useFormStatus();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+        formAction(formData);
+    });
+  }
 
   return (
     <>
-    <Form {...form}>
-      <form ref={formRef} action={formAction} className="space-y-8">
-        {paymentScreenshotUrl && (
-            <input type="hidden" name="paymentScreenshotUrl" value={paymentScreenshotUrl} />
-        )}
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+        <input type="hidden" name="paymentScreenshotUrl" value={paymentScreenshotUrl} />
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
           <CardContent className="space-y-6">
-            <FormField control={form.control} name="fullName" render={({ field }) => (
+             <FormItem>
+                <FormLabel>Full Name *</FormLabel>
+                <FormControl><Input name="fullName" placeholder="Your full name" required /></FormControl>
+            </FormItem>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormItem>
-                    <FormLabel>Full Name *</FormLabel>
-                    <FormControl><Input placeholder="Your full name" {...field} /></FormControl>
-                    <FormMessage />
+                    <FormLabel>Email *</FormLabel>
+                    <FormControl><Input name="email" type="email" placeholder="you@example.com" required /></FormControl>
                 </FormItem>
-            )}/>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email *</FormLabel>
-                        <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="altEmail" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email Address (alt) *</FormLabel>
-                        <FormControl><Input placeholder="Alternate email" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                <FormItem>
+                    <FormLabel>Email Address (alt) *</FormLabel>
+                    <FormControl><Input name="altEmail" type="email" placeholder="Alternate email" required /></FormControl>
+                </FormItem>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="whatsappNumber" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>WhatsApp Number *</FormLabel>
-                        <FormControl>
-                            <div className="flex items-center">
-                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-background text-sm text-muted-foreground h-10">
-                                +91
-                                </span>
-                                <Input placeholder="9XXXXXXXXX" className="rounded-l-none" {...field} />
-                            </div>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="altContactNumber" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Alternate Contact Number *</FormLabel>
-                        <FormControl>
-                            <div className="flex items-center">
-                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-background text-sm text-muted-foreground h-10">
-                                +91
-                                </span>
-                                <Input placeholder="9XXXXXXXXX" className="rounded-l-none" {...field} />
-                            </div>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                <FormItem>
+                    <FormLabel>WhatsApp Number *</FormLabel>
+                    <FormControl>
+                        <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-background text-sm text-muted-foreground h-10">
+                            +91
+                            </span>
+                            <Input name="whatsappNumber" placeholder="9XXXXXXXXX" className="rounded-l-none" required />
+                        </div>
+                    </FormControl>
+                </FormItem>
+                <FormItem>
+                    <FormLabel>Alternate Contact Number *</FormLabel>
+                    <FormControl>
+                        <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-background text-sm text-muted-foreground h-10">
+                            +91
+                            </span>
+                            <Input name="altContactNumber" placeholder="9XXXXXXXXX" className="rounded-l-none" required />
+                        </div>
+                    </FormControl>
+                </FormItem>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="age" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Age (numerals) *</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 17" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="grade" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Grade (numerals) *</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 12" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                <FormItem>
+                    <FormLabel>Age (numerals) *</FormLabel>
+                    <FormControl><Input name="age" type="number" placeholder="e.g., 17" required /></FormControl>
+                </FormItem>
+                <FormItem>
+                    <FormLabel>Grade (numerals) *</FormLabel>
+                    <FormControl><Input name="grade" type="number" placeholder="e.g., 12" required /></FormControl>
+                </FormItem>
             </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="institution" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Institution *</FormLabel>
-                        <FormControl><Input placeholder="School/College" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="munExperience" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>MUN Experience (number) *</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 5" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                <FormItem>
+                    <FormLabel>Institution *</FormLabel>
+                    <FormControl><Input name="institution" placeholder="School/College" required /></FormControl>
+                </FormItem>
+                <FormItem>
+                    <FormLabel>MUN Experience (number) *</FormLabel>
+                    <FormControl><Input name="munExperience" type="number" placeholder="e.g., 5" required /></FormControl>
+                </FormItem>
             </div>
           </CardContent>
         </Card>
@@ -319,67 +208,42 @@ export default function RegistrationForm() {
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter II: Preferences</CardTitle></CardHeader>
           <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="committee1"
-              render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Committee Preference 1 *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
-                        <SelectContent>
-                            {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                </FormItem>
-              )}
-            />
+             <FormItem>
+                <FormLabel>Committee Preference 1 *</FormLabel>
+                <Select name="committee1" required>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
+                    <SelectContent>
+                        {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </FormItem>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="portfolio1_1" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Delegate/Country Preference 1 *</FormLabel>
-                        <FormControl><Input placeholder="Top preference" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
-                <FormField control={form.control} name="portfolio1_2" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Delegate/Country Preference 2 *</FormLabel>
-                        <FormControl><Input placeholder="Alternate preference" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}/>
+                <FormItem>
+                    <FormLabel>Delegate/Country Preference 1 *</FormLabel>
+                    <FormControl><Input name="portfolio1_1" placeholder="Top preference" required /></FormControl>
+                </FormItem>
+                <FormItem>
+                    <FormLabel>Delegate/Country Preference 2 *</FormLabel>
+                    <FormControl><Input name="portfolio1_2" placeholder="Alternate preference" required /></FormControl>
+                </FormItem>
             </div>
-            <FormField
-              control={form.control}
-              name="committee2"
-              render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Committee Preference 2 *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
-                        <SelectContent>
-                             {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                </FormItem>
-            )}/>
-            <FormField control={form.control} name="questions" render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Any questions (optional)</FormLabel>
-                    <FormControl><Textarea placeholder="Optional" {...field} /></FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}/>
-            <FormField control={form.control} name="reference" render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Reference (optional)</FormLabel>
-                    <FormControl><Input placeholder="Name/phone/invite code" {...field} /></FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}/>
+            <FormItem>
+                <FormLabel>Committee Preference 2 *</FormLabel>
+                <Select name="committee2" required>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
+                    <SelectContent>
+                         {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </FormItem>
+            <FormItem>
+                <FormLabel>Any questions (optional)</FormLabel>
+                <FormControl><Textarea name="questions" placeholder="Optional" /></FormControl>
+            </FormItem>
+            <FormItem>
+                <FormLabel>Reference (optional)</FormLabel>
+                <FormControl><Input name="reference" placeholder="Name/phone/invite code" /></FormControl>
+            </FormItem>
           </CardContent>
         </Card>
 
@@ -390,20 +254,17 @@ export default function RegistrationForm() {
             <FormDescription>Early Bird: ₹2,299 per delegate (IPL: ₹2,299). Payment & proof are required.</FormDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <FormField control={form.control} name="paymentMethod" render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Payment Method *</FormLabel>
-                    <div className="relative">
-                        <FormControl>
-                            <Input value={`UPI: ${upiId}`} readOnly name={field.name} />
-                        </FormControl>
-                        <Button type="button" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" onClick={() => copyToClipboard(upiId)}>
-                            <Copy className="h-4 w-4 mr-2" /> Copy
-                        </Button>
-                    </div>
-                    <FormMessage />
-                </FormItem>
-            )}/>
+             <FormItem>
+                <FormLabel>Payment Method *</FormLabel>
+                <div className="relative">
+                    <FormControl>
+                        <Input name="paymentMethod" value={`UPI: ${upiId}`} readOnly />
+                    </FormControl>
+                    <Button type="button" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" onClick={() => copyToClipboard(upiId)}>
+                        <Copy className="h-4 w-4 mr-2" /> Copy
+                    </Button>
+                </div>
+            </FormItem>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 <FormItem>
                     <FormLabel>Upload Payment Screenshot *</FormLabel>
@@ -416,6 +277,7 @@ export default function RegistrationForm() {
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 onChange={handleFileChange}
                                 disabled={isUploading}
+                                required={!paymentScreenshotUrl}
                             />
                             <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
                                 {isUploading ? (
@@ -432,7 +294,6 @@ export default function RegistrationForm() {
                             </div>
                         </div>
                     </FormControl>
-                    <FormMessage />
                 </FormItem>
 
                 <div className="flex flex-col items-center">
@@ -453,15 +314,17 @@ export default function RegistrationForm() {
                 </FormDescription>
             </CardHeader>
             <CardContent className="flex items-center gap-4">
-                 <SubmitButton />
-                <Button type="button" variant="outline" size="lg" onClick={saveDraft} disabled={pending}>
+                 <Button type="submit" size="lg" disabled={isPending}>
+                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Submit Registration
+                </Button>
+                <Button type="button" variant="outline" size="lg" onClick={() => {}} disabled={isPending}>
                     Save Draft
                 </Button>
             </CardContent>
         </Card>
 
       </form>
-    </Form>
     <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
