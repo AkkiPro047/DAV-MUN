@@ -58,7 +58,6 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  paymentScreenshotUrl: z.string().url('A valid payment screenshot is required.'),
 });
 
 
@@ -79,6 +78,7 @@ export default function RegistrationForm() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [trackingId, setTrackingId] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [paymentScreenshotUrl, setPaymentScreenshotUrl] = useState('');
   
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -105,7 +105,6 @@ export default function RegistrationForm() {
       questions: '',
       reference: '',
       paymentMethod: 'upi',
-      paymentScreenshotUrl: '',
     },
   });
 
@@ -114,9 +113,10 @@ export default function RegistrationForm() {
     if (savedDraft) {
       try {
         const draftData = JSON.parse(savedDraft);
-        form.reset(draftData);
+        form.reset(draftData.formData);
         if (draftData.paymentScreenshotUrl) {
             setPreview(draftData.paymentScreenshotUrl);
+            setPaymentScreenshotUrl(draftData.paymentScreenshotUrl);
         }
         toast({
           title: 'Draft Loaded',
@@ -147,6 +147,7 @@ export default function RegistrationForm() {
       setShowSuccessDialog(true);
       form.reset();
       setPreview(null);
+      setPaymentScreenshotUrl('');
       formRef.current?.reset();
       localStorage.removeItem('registrationDraft');
     }
@@ -163,7 +164,11 @@ export default function RegistrationForm() {
   const saveDraft = () => {
     try {
         const currentValues = form.getValues();
-        localStorage.setItem('registrationDraft', JSON.stringify(currentValues));
+        const draft = {
+            formData: currentValues,
+            paymentScreenshotUrl: paymentScreenshotUrl
+        };
+        localStorage.setItem('registrationDraft', JSON.stringify(draft));
         toast({
             title: 'Draft Saved!',
             description: 'Your registration progress has been saved locally.',
@@ -184,6 +189,7 @@ export default function RegistrationForm() {
 
     setPreview(URL.createObjectURL(file));
     setIsUploading(true);
+    setPaymentScreenshotUrl('');
 
     const formData = new FormData();
     formData.append('image', file);
@@ -193,7 +199,7 @@ export default function RegistrationForm() {
     setIsUploading(false);
 
     if (result.success && result.url) {
-        form.setValue('paymentScreenshotUrl', result.url, { shouldValidate: true });
+        setPaymentScreenshotUrl(result.url);
         toast({
             title: 'Image Uploaded!',
             description: 'Your payment screenshot is ready.',
@@ -204,7 +210,6 @@ export default function RegistrationForm() {
             title: 'Upload Failed',
             description: result.message || 'Could not upload the image.',
         });
-        form.setValue('paymentScreenshotUrl', '', { shouldValidate: true });
         setPreview(null);
     }
   };
@@ -215,7 +220,9 @@ export default function RegistrationForm() {
     <>
     <Form {...form}>
       <form ref={formRef} action={formAction} className="space-y-8">
-         <input type="hidden" {...form.register('paymentScreenshotUrl')} />
+        {paymentScreenshotUrl && (
+            <input type="hidden" name="paymentScreenshotUrl" value={paymentScreenshotUrl} />
+        )}
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
@@ -398,40 +405,36 @@ export default function RegistrationForm() {
                 </FormItem>
             )}/>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <FormField
-                    control={form.control}
-                    name="paymentScreenshotUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Upload Payment Screenshot *</FormLabel>
-                            <FormControl>
-                                <div className="relative">
-                                    <Input 
-                                        type="file"
-                                        accept="image/png, image/jpeg, image/webp"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        onChange={handleFileChange}
-                                        disabled={isUploading}
-                                    />
-                                    <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
-                                        {isUploading ? (
-                                            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
-                                        ) : preview ? (
-                                            <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md object-contain max-h-[150px]" />
-                                        ) : (
-                                            <div className="space-y-2">
-                                                <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
-                                                <p className="text-muted-foreground">Click to choose file</p>
-                                                <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
-                                            </div>
-                                        )}
+                <FormItem>
+                    <FormLabel>Upload Payment Screenshot *</FormLabel>
+                    <FormControl>
+                        <div className="relative">
+                            <Input 
+                                type="file"
+                                name="paymentScreenshotFile"
+                                accept="image/png, image/jpeg, image/webp"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={handleFileChange}
+                                disabled={isUploading}
+                            />
+                            <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
+                                {isUploading ? (
+                                    <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                                ) : preview ? (
+                                    <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md object-contain max-h-[150px]" />
+                                ) : (
+                                    <div className="space-y-2">
+                                        <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                                        <p className="text-muted-foreground">Click to choose file</p>
+                                        <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
                                     </div>
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                                )}
+                            </div>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+
                 <div className="flex flex-col items-center">
                     <p className="font-semibold mb-2">Scan UPI QR</p>
                     <Image src="https://i.postimg.cc/d1grCj2z/qr-code.png" alt="UPI QR Code" width={150} height={150} className="rounded-md border p-1" />
