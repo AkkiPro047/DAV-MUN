@@ -1,0 +1,12 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /payment_screenshots/{fileName} {
+      // Allow anyone to upload a payment screenshot
+      allow create: if true;
+
+      // Disallow reading, updating, or deleting by clients
+      allow read, update, delete: if false;
+    }
+  }
+}

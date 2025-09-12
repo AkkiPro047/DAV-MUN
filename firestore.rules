@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /registrations/{registrationId} {
+      // Allow public creation of new registrations
+      allow create: if true;
+      
+      // Allow public read for a single document (for status tracking)
+      allow get: if true;
+      
+      // Prevent public listing of all documents
+      allow list: if false;
+
+      // Only allow authenticated users to update or delete
+      // We will enhance this later to be admin-only
+      allow update, delete: if request.auth != null;
+    }
+  }
+}
