@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getRegistrationStatus } from './actions';
-import { Loader2, Search, History, User, Mail, Phone } from 'lucide-react';
+import { Loader2, Search, History, User, Mail, Phone, Copy } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -22,6 +23,7 @@ function SubmitButton() {
 }
 
 export default function TrackingForm() {
+  const { toast } = useToast();
   const [state, formAction] = useActionState(getRegistrationStatus, { status: 'idle' });
   const [trackingIdInput, setTrackingIdInput] = useState('');
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -35,8 +37,13 @@ export default function TrackingForm() {
     setTrackingIdInput(id);
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: 'Copied to clipboard!', description: text });
+  };
+
   const getStatusVariant = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'approved':
         return 'default';
       case 'pending':
@@ -82,7 +89,7 @@ export default function TrackingForm() {
                     {state.data.status}
                   </Badge>
                 </AlertTitle>
-                <AlertDescription>
+                <AlertDescription asChild>
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
                             <User className="h-4 w-4 text-muted-foreground" />
@@ -115,21 +122,25 @@ export default function TrackingForm() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <History className="mr-2 h-5 w-5" />
-              Your Previous Submissions
+              Your All Tracking IDs
             </CardTitle>
-            <CardDescription>Click an ID to check its status.</CardDescription>
+            <CardDescription>Click an ID to check its status or copy it.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {savedIds.map((id) => (
-                <Button
-                  key={id}
-                  variant="ghost"
-                  className="w-full justify-start font-mono text-xs truncate"
-                  onClick={() => handleSavedIdClick(id)}
-                >
-                  {id}
-                </Button>
+                <div key={id} className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start font-mono text-xs truncate"
+                    onClick={() => handleSavedIdClick(id)}
+                  >
+                    {id}
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(id)}>
+                      <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
               ))}
             </div>
           </CardContent>
@@ -138,4 +149,3 @@ export default function TrackingForm() {
     </div>
   );
 }
-    

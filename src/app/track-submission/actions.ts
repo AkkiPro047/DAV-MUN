@@ -47,5 +47,3 @@ export async function getRegistrationStatus(
         return { status: 'error', message: 'An unexpected error occurred.' };
     }
 }
-
-    

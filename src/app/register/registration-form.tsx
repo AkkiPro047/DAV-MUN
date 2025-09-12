@@ -330,7 +330,7 @@ export default function RegistrationForm() {
           <AlertDialogHeader>
             <AlertDialogTitle>Registration Submitted!</AlertDialogTitle>
             <AlertDialogDescription>
-              Your registration has been received. Please save your tracking ID to check your application status.
+              Your registration has been received. Please save your tracking ID to check your application status. Your submission history is also available on the 'Track Submission' page.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="mt-4 bg-muted p-3 rounded-md">
@@ -347,5 +347,3 @@ export default function RegistrationForm() {
     </>
   );
 }
-
-    
