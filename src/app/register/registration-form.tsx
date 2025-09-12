@@ -109,6 +109,25 @@ export default function RegistrationForm() {
   });
 
   useEffect(() => {
+    const savedDraft = localStorage.getItem('registrationDraft');
+    if (savedDraft) {
+      try {
+        const draftData = JSON.parse(savedDraft);
+        // Don't set file input value from local storage
+        const { paymentScreenshot, ...restData } = draftData;
+        form.reset(restData);
+        toast({
+          title: 'Draft Loaded',
+          description: 'Your previously saved draft has been loaded.',
+        });
+      } catch (error) {
+        console.error("Failed to parse draft from local storage", error);
+      }
+    }
+  }, [form, toast]);
+
+
+  useEffect(() => {
     if (formState.message && !formState.success) {
       toast({
         variant: 'destructive',
@@ -127,6 +146,7 @@ export default function RegistrationForm() {
       form.reset();
       setPreview(null);
       formRef.current?.reset();
+      localStorage.removeItem('registrationDraft');
     }
   }, [formState, toast, form]);
 
@@ -136,6 +156,24 @@ export default function RegistrationForm() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: 'Copied to clipboard!', description: text });
+  };
+
+  const saveDraft = () => {
+    try {
+        const currentValues = form.getValues();
+        localStorage.setItem('registrationDraft', JSON.stringify(currentValues));
+        toast({
+            title: 'Draft Saved!',
+            description: 'Your registration progress has been saved locally.',
+        });
+    } catch (error) {
+        console.error("Failed to save draft to local storage", error);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not save your draft.',
+        });
+    }
   };
   
   const { pending } = useFormStatus();
@@ -243,7 +281,7 @@ export default function RegistrationForm() {
             <FormField control={form.control} name="committee1" render={({ field }) => (
                 <FormItem>
                     <FormLabel>Committee Preference 1 *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
                             {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
@@ -271,7 +309,7 @@ export default function RegistrationForm() {
             <FormField control={form.control} name="committee2" render={({ field }) => (
                 <FormItem>
                     <FormLabel>Committee Preference 2 *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger></FormControl>
                         <SelectContent>
                              {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
@@ -379,7 +417,7 @@ export default function RegistrationForm() {
             </CardHeader>
             <CardContent className="flex items-center gap-4">
                  <SubmitButton />
-                <Button type="button" variant="outline" size="lg" onClick={() => console.log("Draft saved!")} disabled={pending}>
+                <Button type="button" variant="outline" size="lg" onClick={saveDraft} disabled={pending}>
                     Save Draft
                 </Button>
             </CardContent>
@@ -409,3 +447,5 @@ export default function RegistrationForm() {
     </>
   );
 }
+
+    
