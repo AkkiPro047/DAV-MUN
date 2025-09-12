@@ -82,7 +82,7 @@ export default function TrackingForm() {
                     {state.data.status}
                   </Badge>
                 </AlertTitle>
-                <AlertDescription asChild>
+                <AlertDescription>
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
                             <User className="h-4 w-4 text-muted-foreground" />
