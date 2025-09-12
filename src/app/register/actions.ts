@@ -22,6 +22,7 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
+  paymentScreenshot: z.any(),
 });
 
 type FormState = {
@@ -36,16 +37,16 @@ export async function handleRegistrationForm(
 ): Promise<FormState> {
   const rawData = Object.fromEntries(formData.entries());
   
+  const paymentScreenshot = formData.get('paymentScreenshot') as File;
+  if (!paymentScreenshot || paymentScreenshot.size === 0) {
+      return { success: false, message: 'Payment screenshot is required.' };
+  }
+
   const validation = formSchema.safeParse(rawData);
 
   if (!validation.success) {
     console.error("Form validation failed:", validation.error.flatten().fieldErrors);
     return { success: false, message: 'Invalid form data. Please check your entries.' };
-  }
-  
-  const paymentScreenshot = formData.get('paymentScreenshot') as File;
-  if (!paymentScreenshot || paymentScreenshot.size === 0) {
-      return { success: false, message: 'Payment screenshot is required.' };
   }
 
   let downloadURL = '';
@@ -75,8 +76,9 @@ export async function handleRegistrationForm(
     }
 
     // 2. Save the form data, including the file URL, to Firestore.
+    const { paymentScreenshot: _, ...formDataToSave } = validation.data;
     const docRef = await addDoc(collection(db, 'registrations'), {
-        ...validation.data,
+        ...formDataToSave,
         paymentScreenshotUrl: downloadURL,
         status: 'pending', // Initial status
         createdAt: serverTimestamp(),
