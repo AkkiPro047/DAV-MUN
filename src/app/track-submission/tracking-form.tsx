@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getRegistrationStatus } from './actions';
-import { Loader2, Search, History } from 'lucide-react';
+import { Loader2, Search, History, User, Mail, Phone } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 
@@ -76,14 +76,27 @@ export default function TrackingForm() {
           <CardContent>
             {state.status === 'success' && state.data && (
               <Alert>
-                <AlertTitle className="flex items-center justify-between">
-                  <span>Status for {state.data.fullName}</span>
+                <AlertTitle className="flex items-center justify-between mb-4">
+                  <span>Application Status</span>
                   <Badge variant={getStatusVariant(state.data.status)}>
                     {state.data.status}
                   </Badge>
                 </AlertTitle>
-                <AlertDescription>
-                  Submitted on: {state.data.createdAt}
+                <AlertDescription asChild>
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">{state.data.fullName}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Mail className="h-4 w-4 text-muted-foreground" />
+                            <span>{state.data.email}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Phone className="h-4 w-4 text-muted-foreground" />
+                            <span>{state.data.whatsappNumber}</span>
+                        </div>
+                    </div>
                 </AlertDescription>
               </Alert>
             )}
@@ -125,5 +138,4 @@ export default function TrackingForm() {
     </div>
   );
 }
-
     

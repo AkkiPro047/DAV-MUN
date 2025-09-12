@@ -35,7 +35,8 @@ export async function getRegistrationStatus(
                 data: {
                     fullName: data.fullName,
                     status: data.status,
-                    createdAt: data.createdAt.toDate().toLocaleString(),
+                    email: data.email,
+                    whatsappNumber: data.whatsappNumber
                 }
             };
         } else {
