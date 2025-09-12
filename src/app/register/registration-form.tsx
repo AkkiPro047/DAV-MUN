@@ -58,7 +58,7 @@ const formSchema = z.object({
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
-  paymentScreenshot: z.any().refine(files => files?.length == 1, 'Payment screenshot is required.'),
+  // paymentScreenshot is handled by the form action directly, not RHF
 });
 
 
@@ -104,7 +104,6 @@ export default function RegistrationForm() {
       questions: '',
       reference: '',
       paymentMethod: 'upi',
-      paymentScreenshot: undefined,
     },
   });
 
@@ -364,22 +363,17 @@ export default function RegistrationForm() {
                 </FormItem>
             )}/>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <FormField
-                control={form.control}
-                name="paymentScreenshot"
-                render={({ field: { onChange, value, ...rest }}) => (
-                    <FormItem>
+                <FormItem>
                     <FormLabel>Upload Payment Screenshot *</FormLabel>
                     <FormControl>
                         <div className="relative">
                             <Input 
-                                type="file" 
+                                type="file"
+                                name="paymentScreenshot"
                                 accept="image/png, image/jpeg, image/webp"
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                {...rest}
                                 onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    onChange(e.target.files);
                                     if (file) {
                                         setPreview(URL.createObjectURL(file));
                                     } else {
@@ -401,10 +395,7 @@ export default function RegistrationForm() {
                         </div>
                     </FormControl>
                     <FormMessage />
-                    </FormItem>
-                )}
-                />
-
+                </FormItem>
                 <div className="flex flex-col items-center">
                     <p className="font-semibold mb-2">Scan UPI QR</p>
                     <Image src="https://i.postimg.cc/d1grCj2z/qr-code.png" alt="UPI QR Code" width={150} height={150} className="rounded-md border p-1" />
@@ -454,3 +445,5 @@ export default function RegistrationForm() {
     </>
   );
 }
+
+    
