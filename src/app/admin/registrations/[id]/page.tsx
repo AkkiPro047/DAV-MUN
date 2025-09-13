@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
@@ -158,11 +158,11 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
             <Card>
                 <CardContent className="p-6 flex items-center gap-4">
                     <Button onClick={() => handleStatusChange('approved')} disabled={actionPending || registration.status === 'approved'} variant="default">
-                        {actionPending ? <CheckCircle className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
+                        {actionPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
                         Approve
                     </Button>
                     <Button onClick={() => handleStatusChange('rejected')} disabled={actionPending || registration.status === 'rejected'} variant="destructive">
-                        {actionPending ? <XCircle className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}
+                        {actionPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}
                         Reject
                     </Button>
                 </CardContent>

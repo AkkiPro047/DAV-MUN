@@ -71,7 +71,7 @@ function RegistrationRow({ registration, refreshData }: { registration: Registra
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b">
+    <div className="grid grid-cols-[1fr_160px_240px] items-center p-4 border-b">
         <div className="flex-1 min-w-0">
             <p className="font-medium truncate">{registration.fullName}</p>
         </div>
@@ -81,7 +81,7 @@ function RegistrationRow({ registration, refreshData }: { registration: Registra
                 {registration.status}
             </Badge>
         </div>
-        <div className="flex items-center gap-2 w-60 justify-end">
+        <div className="flex items-center gap-2 justify-end">
             <Button asChild variant="outline" size="sm">
               <Link href={`/admin/registrations/${registration.id}`}>
                 <Eye className="mr-2 h-4 w-4" /> View
