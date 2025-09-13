@@ -19,8 +19,9 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogFooter,
-    DialogClose,
 } from "@/components/ui/dialog"
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 
 function DetailCard({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: React.ReactNode }) {
@@ -42,6 +43,11 @@ function DetailCard({ icon: Icon, label, value }: { icon: React.ElementType, lab
     )
 }
 
+type Allotment = {
+    committee: string;
+    portfolio: string;
+}
+
 export default function RegistrationDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { toast } = useToast();
@@ -50,6 +56,8 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
     const [isPending, startTransition] = useTransition();
     const [actionPending, startActionTransition] = useTransition();
     const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [allotment, setAllotment] = useState<Allotment | null>(null);
+
 
     useEffect(() => {
         startTransition(async () => {
@@ -59,6 +67,9 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
             }
             setRegistration(data);
             setAdminResponse(data.adminResponse || '');
+            if (data.committee1 && data.portfolio1_1) {
+                setAllotment({ committee: data.committee1, portfolio: data.portfolio1_1 });
+            }
         });
     }, [params.id]);
 
@@ -89,8 +100,8 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
     }
 
     const generateConfirmationMessage = () => {
-        if (!registration) return '';
-        const message = `Hello ${registration.fullName},\n\nYour MUN Delegate form had been Approved ✅\n\nYour Commitee - ${registration.committee1}\nYour Portfolio - ${registration.portfolio1_1}\n\nLooking forward for your Enthusiastic Participation.\nJoin WhatsApp Group for Further Announcements.\n\n》 Link of WhatsApp Group: [WhatsApp Link will be updated later]\n\nBest Regards,\nTeam DAVPS MUN Secretariat`;
+        if (!registration || !allotment) return '';
+        const message = `Hello ${registration.fullName},\n\nYour MUN Delegate form had been Approved ✅\n\nWe have given you the ${allotment.committee} Committee.\nYour Portfolio - ${allotment.portfolio}\n\nLooking forward for your Enthusiastic Participation.\nJoin WhatsApp Group for Further Announcements.\n\n》 Link of WhatsApp Group: [WhatsApp Link will be updated later]\n\nBest Regards,\nTeam DAVPS MUN Secretariat`;
         return message;
     }
 
@@ -110,6 +121,12 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
         window.location.href = mailtoUrl;
         setConfirmDialogOpen(false);
     }
+
+    const handlePortfolioSelection = (value: string) => {
+        if (!registration) return;
+        const [committee, portfolio] = value.split('||');
+        setAllotment({ committee, portfolio });
+    };
 
 
     if (isPending || !registration) {
@@ -144,6 +161,13 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
             default: return 'outline';
         }
     };
+    
+    const portfolioOptions = [
+        { committee: registration.committee1, portfolio: registration.portfolio1_1, label: `Committee 1: ${registration.committee1} - ${registration.portfolio1_1}` },
+        { committee: registration.committee1, portfolio: registration.portfolio1_2, label: `Committee 1: ${registration.committee1} - ${registration.portfolio1_2}` },
+        { committee: registration.committee2, portfolio: 'N/A', label: `Committee 2: ${registration.committee2}` },
+    ];
+    
 
     return (
         <div className="space-y-6">
@@ -244,14 +268,31 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Send Confirmation</DialogTitle>
+                                <DialogTitle>Send Confirmation to {registration.fullName}</DialogTitle>
                                 <DialogDescription>
-                                    Choose the method to send the confirmation message to {registration.fullName}.
+                                    Select the allotted committee and portfolio, then choose the method to send the confirmation.
                                 </DialogDescription>
                             </DialogHeader>
-                            <DialogFooter className="gap-2 sm:justify-center">
-                                <Button onClick={handleSendWhatsApp}>Send via WhatsApp</Button>
-                                <Button onClick={handleSendEmail}>Send via Email</Button>
+                            
+                            <div className="py-4">
+                                <Label className="font-semibold">Allotment</Label>
+                                <RadioGroup 
+                                    defaultValue={allotment ? `${allotment.committee}||${allotment.portfolio}` : undefined}
+                                    onValueChange={handlePortfolioSelection} 
+                                    className="mt-2 space-y-2"
+                                >
+                                    {portfolioOptions.map((opt, index) => (
+                                        <div key={index} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={`${opt.committee}||${opt.portfolio}`} id={`opt-${index}`} />
+                                            <Label htmlFor={`opt-${index}`}>{opt.label}</Label>
+                                        </div>
+                                    ))}
+                                </RadioGroup>
+                            </div>
+
+                            <DialogFooter className="gap-2 sm:justify-end">
+                                <Button onClick={handleSendWhatsApp} disabled={!allotment}>Send via WhatsApp</Button>
+                                <Button onClick={handleSendEmail} disabled={!allotment}>Send via Email</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
