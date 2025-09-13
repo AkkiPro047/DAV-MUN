@@ -1,19 +1,24 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /registrations/{registrationId} {
-      // Allow public creation of new registrations
-      allow create: if true;
-      
-      // Allow public read for a single document (for status tracking)
-      allow get: if true;
-      
-      // Prevent public listing of all documents
-      allow list: if false;
+    
+    // Default deny all access to other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
 
-      // Only allow authenticated users to update or delete
-      // We will enhance this later to be admin-only
-      allow update, delete: if request.auth != null;
+    // Rules for the 'registrations' collection
+    match /registrations/{registrationId} {
+      // Anyone can create a new registration (submit the form)
+      allow create: if true;
+
+      // Anyone can read a registration if they know the ID (for status tracking)
+      allow read: if true;
+
+      // NO ONE can update or delete from the client. This must be done
+      // by the server with admin credentials.
+      allow update, delete: if false;
     }
   }
 }
