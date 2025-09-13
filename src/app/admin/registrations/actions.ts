@@ -24,6 +24,7 @@ export type Registration = {
   paymentScreenshotUrl: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: Date;
+  adminResponse?: string;
 };
 
 export async function getRegistrations(): Promise<Registration[]> {
@@ -70,6 +71,19 @@ export async function updateRegistrationStatus(id: string, status: 'pending' | '
         return { success: true };
     } catch (error) {
         console.error("Failed to update status:", error);
+        return { success: false };
+    }
+}
+
+export async function updateRegistrationResponse(id: string, response: string): Promise<{success: boolean}> {
+    try {
+        const adminApp = initializeAdmin();
+        const db = getFirestore(adminApp);
+        const docRef = db.collection('registrations').doc(id);
+        await docRef.update({ adminResponse: response });
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update response:", error);
         return { success: false };
     }
 }

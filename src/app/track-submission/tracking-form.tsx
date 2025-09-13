@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getRegistrationStatus } from './actions';
-import { Loader2, Search, History, User, Mail, Copy, CheckCircle, XCircle, Hourglass } from 'lucide-react';
+import { Loader2, Search, History, User, Mail, Copy, CheckCircle, XCircle, Hourglass, MessageSquare } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -131,9 +131,23 @@ export default function TrackingForm() {
                     {currentStatusInfo.message}
                   </AlertDescription>
                 </Alert>
+
+                {state.data.adminResponse && (
+                    <Alert variant="default" className="bg-blue-500/10 border-blue-500/50">
+                        <MessageSquare className="h-5 w-5 text-blue-500" />
+                        <AlertTitle className="text-blue-400">Admin Response</AlertTitle>
+                        <AlertDescription className="text-foreground/80">
+                            {state.data.adminResponse}
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <DetailField label="Full Name" value={state.data.fullName} />
                     <DetailField label="Email" value={state.data.email} />
+                </div>
+                 <div className="text-center text-xs text-muted-foreground pt-4">
+                    Submitted on: {new Date(state.data.createdAt).toLocaleString()}
                 </div>
               </div>
             )}

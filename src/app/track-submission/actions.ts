@@ -38,6 +38,8 @@ export async function getRegistrationStatus(
                     fullName: data.fullName,
                     status: data.status,
                     email: data.email,
+                    createdAt: data.createdAt.toDate().toISOString(),
+                    adminResponse: data.adminResponse || null,
                 }
             };
         } else {

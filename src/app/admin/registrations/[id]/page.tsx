@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { getRegistrationById, Registration, updateRegistrationStatus } from '../actions';
+import { getRegistrationById, Registration, updateRegistrationStatus, updateRegistrationResponse } from '../actions';
 import { notFound, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon, Loader2, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { Textarea } from '@/components/ui/textarea';
 
 function DetailCard({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: React.ReactNode }) {
     if (!value) return null;
@@ -34,6 +35,7 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
     const router = useRouter();
     const { toast } = useToast();
     const [registration, setRegistration] = useState<Registration | null>(null);
+    const [adminResponse, setAdminResponse] = useState('');
     const [isPending, startTransition] = useTransition();
     const [actionPending, startActionTransition] = useTransition();
 
@@ -44,6 +46,7 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                 notFound();
             }
             setRegistration(data);
+            setAdminResponse(data.adminResponse || '');
         });
     }, [params.id]);
 
@@ -59,6 +62,19 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
             }
         });
     };
+    
+    const handleResponseSave = () => {
+        if (!registration) return;
+        startActionTransition(async () => {
+            const result = await updateRegistrationResponse(registration.id, adminResponse);
+            if (result.success) {
+                toast({ title: 'Response Saved', description: 'Your response has been saved.' });
+                setRegistration(prev => prev ? { ...prev, adminResponse } : null);
+            } else {
+                toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save the response.' });
+            }
+        });
+    }
 
     if (isPending || !registration) {
         return (
@@ -155,6 +171,24 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                 </Card>
             </div>
             
+             <Card>
+                <CardHeader>
+                    <CardTitle>Admin Response</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <Textarea 
+                        placeholder="Provide feedback or a note for the applicant..."
+                        value={adminResponse}
+                        onChange={(e) => setAdminResponse(e.target.value)}
+                        rows={4}
+                    />
+                    <Button onClick={handleResponseSave} disabled={actionPending}>
+                        {actionPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                        Save Response
+                    </Button>
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardContent className="p-6 flex items-center gap-4">
                     <Button onClick={() => handleStatusChange('approved')} disabled={actionPending || registration.status === 'approved'} variant="default">
