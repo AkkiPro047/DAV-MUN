@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { useEffect, useState, useTransition } from 'react';
 import { getRegistrationById, Registration, updateRegistrationStatus, updateRegistrationResponse } from '../actions';
 import { notFound, useRouter } from 'next/navigation';
