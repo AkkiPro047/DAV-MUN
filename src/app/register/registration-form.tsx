@@ -273,7 +273,7 @@ export default function RegistrationForm() {
         <Card>
           <CardHeader>
             <CardTitle className="font-headline text-2xl">Chapter III: Tribute</CardTitle>
-            <CardDescription>Early Bird: ₹2,299 per delegate (IPL: ₹2,299). Please transfer to the account below and upload a screenshot of the receipt.</CardDescription>
+            <CardDescription>₹2k Per Delegate, ₹3.6k for IPL (2 users). Please transfer to the account below and upload a screenshot of the receipt.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
              <div className="space-y-4">
