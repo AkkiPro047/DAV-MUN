@@ -3,7 +3,7 @@ import { Gavel, Globe, Users, MessageSquare, BookOpen, Award, Briefcase, Lightbu
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-const features = [
+const features = [ 
   {
     icon: Gavel,
     title: 'Formal Proceedings',
