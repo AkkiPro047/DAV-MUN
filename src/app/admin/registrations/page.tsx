@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { getRegistrations, Registration } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Eye, CheckCircle, XCircle, Trash2 } from 'lucide-react';
+import { RefreshCw, Eye, CheckCircle, XCircle, Trash2, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,15 @@ import {
     TabsList,
     TabsTrigger,
   } from "@/components/ui/tabs"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 
 function RegistrationRow({ registration, refreshData }: { registration: Registration, refreshData: () => void }) {
@@ -156,6 +165,7 @@ function RegistrationList({ registrations, refreshData, isLoading }: { registrat
 export default function RegistrationsPage() {
   const [allData, setAllData] = useState<Registration[]>([]);
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState('all');
 
   const fetchData = () => {
     startTransition(async () => {
@@ -170,6 +180,49 @@ export default function RegistrationsPage() {
 
   const filtered = (status: 'pending' | 'approved' | 'rejected') => allData.filter(r => r.status === status);
 
+  const getVisibleData = () => {
+    switch (activeTab) {
+      case 'pending': return filtered('pending');
+      case 'approved': return filtered('approved');
+      case 'rejected': return filtered('rejected');
+      default: return allData;
+    }
+  }
+
+  const downloadFile = (data: string, fileName: string, fileType: string) => {
+    const blob = new Blob([data], { type: fileType });
+    const a = document.createElement('a');
+    a.download = fileName;
+    a.href = window.URL.createObjectURL(blob);
+    const clickEvt = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    });
+    a.dispatchEvent(clickEvt);
+    a.remove();
+  };
+
+  const exportToCsv = () => {
+    const dataToExport = getVisibleData();
+    if(dataToExport.length === 0) return;
+
+    let csv = Object.keys(dataToExport[0]).join(',');
+    dataToExport.forEach(item => {
+        csv += '\n' + Object.values(item).map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+    });
+
+    downloadFile(csv, `registrations-${activeTab}.csv`, 'text/csv');
+  };
+
+  const exportToJson = () => {
+    const dataToExport = getVisibleData();
+    if(dataToExport.length === 0) return;
+    
+    const json = JSON.stringify(dataToExport, null, 2);
+    downloadFile(json, `registrations-${activeTab}.json`, 'application/json');
+  };
+
   return (
     <div className="space-y-4">
         <Card>
@@ -179,13 +232,34 @@ export default function RegistrationsPage() {
                         <CardTitle>Registration Requests</CardTitle>
                         <CardDescription>Showing {allData.length} total registration(s).</CardDescription>
                     </div>
-                    <Button onClick={fetchData} variant="outline" size="icon" disabled={isPending}>
-                        <RefreshCw className={cn('h-4 w-4', isPending && 'animate-spin')} />
-                    </Button>
+                    <div className="flex gap-2">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="icon" disabled={getVisibleData().length === 0}>
+                                    <Download className="h-4 w-4" />
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Export Data</DialogTitle>
+                                    <DialogDescription>
+                                        Select the format to export the currently visible registration data.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="gap-2 sm:justify-center">
+                                    <Button onClick={exportToCsv}>Export as CSV</Button>
+                                    <Button onClick={exportToJson}>Export as JSON</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        <Button onClick={fetchData} variant="outline" size="icon" disabled={isPending}>
+                            <RefreshCw className={cn('h-4 w-4', isPending && 'animate-spin')} />
+                        </Button>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="p-0">
-                <Tabs defaultValue="all">
+                <Tabs defaultValue="all" onValueChange={setActiveTab}>
                     <div className="px-6 border-b">
                         <TabsList>
                             <TabsTrigger value="all">All ({allData.length})</TabsTrigger>
