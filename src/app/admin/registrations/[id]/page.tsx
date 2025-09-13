@@ -48,7 +48,7 @@ type Allotment = {
     portfolio: string;
 }
 
-export default function RegistrationDetailPage({ params }: { params: { id: string } }) {
+export default function RegistrationDetailPage({ params: { id } }: { params: { id: string } }) {
     const router = useRouter();
     const { toast } = useToast();
     const [registration, setRegistration] = useState<Registration | null>(null);
@@ -61,7 +61,7 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
 
     useEffect(() => {
         startTransition(async () => {
-            const data = await getRegistrationById(params.id);
+            const data = await getRegistrationById(id);
             if (!data) {
                 notFound();
             }
@@ -71,7 +71,7 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                 setAllotment({ committee: data.committee1, portfolio: data.portfolio1_1 });
             }
         });
-    }, [params.id]);
+    }, [id]);
 
     const handleStatusChange = (status: 'approved' | 'rejected') => {
         if (!registration) return;
