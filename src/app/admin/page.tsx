@@ -7,7 +7,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/admin/registrations');
+    router.replace('/admin/dashboard');
   }, [router]);
 
   return null;

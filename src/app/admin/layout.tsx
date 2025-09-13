@@ -4,13 +4,14 @@ import { useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { ADMIN_UID } from '@/lib/constants';
-import { Loader2, Users, FileText, UserPlus, LogOut, UserCog } from 'lucide-react';
+import { Loader2, Users, FileText, UserPlus, LogOut, UserCog, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const adminNavLinks = [
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/registrations', label: 'Registrations', icon: FileText },
   { href: '/admin/users/list', label: 'Manage Users', icon: UserCog },
   { href: '/admin/users/add', label: 'Add User', icon: UserPlus },
