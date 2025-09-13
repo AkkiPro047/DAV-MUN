@@ -7,12 +7,23 @@ export type Registration = {
   id: string;
   fullName: string;
   email: string;
+  altEmail: string;
   whatsappNumber: string;
+  altContactNumber: string;
+  age: number;
+  grade: number;
   institution: string;
+  munExperience: number;
   committee1: string;
+  portfolio1_1: string;
+  portfolio1_2: string;
+  committee2: string;
+  questions?: string;
+  reference?: string;
+  paymentMethod: string;
+  paymentScreenshotUrl: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: Date;
-  [key: string]: any; 
 };
 
 export async function getRegistrations(): Promise<Registration[]> {
@@ -26,12 +37,7 @@ export async function getRegistrations(): Promise<Registration[]> {
     const data = doc.data();
     return {
       id: doc.id,
-      fullName: data.fullName,
-      email: data.email,
-      whatsappNumber: data.whatsappNumber,
-      institution: data.institution,
-      committee1: data.committee1,
-      status: data.status,
+      ...data,
       createdAt: data.createdAt.toDate(),
     } as Registration;
   });
