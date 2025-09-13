@@ -38,7 +38,16 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
+// Extend the jsPDF type to include autoTable
+declare module 'jspdf' {
+    interface jsPDF {
+      autoTable: (options: any) => jsPDF;
+    }
+  }
 
 function RegistrationRow({ registration, refreshData }: { registration: Registration, refreshData: () => void }) {
   const { toast } = useToast();
@@ -223,6 +232,33 @@ export default function RegistrationsPage() {
     downloadFile(json, `registrations-${activeTab}.json`, 'application/json');
   };
 
+  const exportToXlsx = () => {
+    const dataToExport = getVisibleData();
+    if(dataToExport.length === 0) return;
+    
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
+    XLSX.writeFile(workbook, `registrations-${activeTab}.xlsx`);
+  };
+
+  const exportToPdf = () => {
+    const dataToExport = getVisibleData();
+    if(dataToExport.length === 0) return;
+
+    const doc = new jsPDF();
+    const tableColumn = Object.keys(dataToExport[0]);
+    const tableRows = dataToExport.map(item => Object.values(item).map(v => String(v)));
+
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+    });
+    
+    doc.save(`registrations-${activeTab}.pdf`);
+  };
+
+
   return (
     <div className="space-y-4">
         <Card>
@@ -246,9 +282,11 @@ export default function RegistrationsPage() {
                                         Select the format to export the currently visible registration data.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <DialogFooter className="gap-2 sm:justify-center">
+                                <DialogFooter className="gap-2 sm:justify-center flex-wrap">
                                     <Button onClick={exportToCsv}>Export as CSV</Button>
                                     <Button onClick={exportToJson}>Export as JSON</Button>
+                                    <Button onClick={exportToXlsx}>Export as XLSX</Button>
+                                    <Button onClick={exportToPdf}>Export as PDF</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
