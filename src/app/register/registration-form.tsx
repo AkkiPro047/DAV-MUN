@@ -30,6 +30,33 @@ import {
 } from "@/components/ui/alert-dialog";
 
 
+function DetailRow({ label, value }: { label: string; value: string }) {
+    const { toast } = useToast();
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast({ title: 'Copied to clipboard!', description: text });
+    };
+
+    return (
+        <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-3">
+            <div className="space-y-0.5">
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <p className="font-mono text-base font-medium">{value}</p>
+            </div>
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => copyToClipboard(value)}
+            >
+                <Copy className="h-4 w-4" />
+            </Button>
+        </div>
+    );
+}
+
+
 export default function RegistrationForm() {
   const { toast } = useToast();
   const [preview, setPreview] = useState<string | null>(null);
@@ -89,14 +116,6 @@ export default function RegistrationForm() {
     }
   }, []);
 
-
-  const upiId = 'placeholder@fam';
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({ title: 'Copied to clipboard!', description: text });
-  };
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -146,6 +165,8 @@ export default function RegistrationForm() {
     <>
     <form ref={formRef} action={formAction} className="space-y-8">
         <input type="hidden" name="paymentScreenshotUrl" value={paymentScreenshotUrl} />
+        <input type="hidden" name="paymentMethod" value="Bank Transfer" />
+
         {/* Chapter I: Identity */}
         <Card>
           <CardHeader><CardTitle className="font-headline text-2xl">Chapter I: Identity</CardTitle></CardHeader>
@@ -254,52 +275,46 @@ export default function RegistrationForm() {
         <Card>
           <CardHeader>
             <CardTitle className="font-headline text-2xl">Chapter III: Tribute</CardTitle>
-            <CardDescription>Early Bird: ₹2,299 per delegate (IPL: ₹2,299). Payment & proof are required.</CardDescription>
+            <CardDescription>Early Bird: ₹2,299 per delegate (IPL: ₹2,299). Please transfer to the account below and upload a screenshot of the receipt.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-             <div className="space-y-2">
-                <Label>Payment Method *</Label>
-                <div className="relative">
-                    <Input id="paymentMethod" name="paymentMethod" value={`UPI: ${upiId}`} readOnly />
-                    <Button type="button" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-8" onClick={() => copyToClipboard(upiId)}>
-                        <Copy className="h-4 w-4 mr-2" /> Copy
-                    </Button>
-                </div>
-            </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+             <div className="space-y-4">
+                <p className="font-medium">Bank Account Details</p>
                 <div className="space-y-2">
-                    <Label htmlFor="paymentScreenshotFile">Upload Payment Screenshot *</Label>
-                    <div className="relative">
-                        <Input
-                            id="paymentScreenshotFile"
-                            type="file"
-                            name="paymentScreenshotFile"
-                            accept="image/png, image/jpeg, image/webp"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={handleFileChange}
-                            disabled={isUploading}
-                            required={!paymentScreenshotUrl}
-                        />
-                        <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
-                            {isUploading ? (
-                                <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
-                            ) : preview ? (
-                                <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md object-contain max-h-[150px]" />
-                            ) : (
-                                <div className="space-y-2">
-                                    <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
-                                    <p className="text-muted-foreground">Click to choose file</p>
-                                    <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
-                                </div>
-                            )}
-                        </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Bank Name</p>
+                        <p className="font-medium">CANARA BANK, SECTOR-7, ROHINI</p>
                     </div>
+                    <DetailRow label="Account No" value="8597101000004" />
+                    <DetailRow label="IFSC Code" value="CNRB0008597" />
                 </div>
-
-                <div className="flex flex-col items-center">
-                    <p className="font-semibold mb-2">Scan UPI QR</p>
-                    <Image src="https://i.postimg.cc/d1grCj2z/qr-code.png" alt="UPI QR Code" width={150} height={150} className="rounded-md border p-1" />
-                    <p className="text-xs text-muted-foreground mt-2 text-center">After paying, upload your screenshot above.</p>
+             </div>
+             <div className="space-y-4">
+                 <p className="font-medium">Upload Payment Screenshot *</p>
+                <div className="relative">
+                    <Input
+                        id="paymentScreenshotFile"
+                        type="file"
+                        name="paymentScreenshotFile"
+                        accept="image/png, image/jpeg, image/webp"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        onChange={handleFileChange}
+                        disabled={isUploading}
+                        required={!paymentScreenshotUrl}
+                    />
+                    <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-6 text-center flex justify-center items-center min-h-[150px]">
+                        {isUploading ? (
+                            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                        ) : preview ? (
+                            <Image src={preview} alt="Screenshot preview" width={200} height={200} className="mx-auto rounded-md object-contain max-h-[150px]" />
+                        ) : (
+                            <div className="space-y-2">
+                                <Upload className="mx-auto h-8 w-8 text-muted-foreground" />
+                                <p className="text-muted-foreground">Click to choose file</p>
+                                <p className="text-xs text-muted-foreground">JPG/PNG/WEBP/JPEG</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
           </CardContent>
@@ -337,7 +352,11 @@ export default function RegistrationForm() {
             <p className="font-mono text-sm text-foreground break-all">{trackingId}</p>
           </div>
           <AlertDialogFooter>
-            <Button variant="outline" onClick={() => copyToClipboard(trackingId)}>
+            <Button variant="outline" onClick={() => {
+                const { toast } = useToast();
+                navigator.clipboard.writeText(trackingId);
+                toast({ title: 'Copied to clipboard!', description: trackingId });
+            }}>
                 <Copy className="mr-2 h-4 w-4" /> Copy ID
             </Button>
             <AlertDialogAction onClick={() => setShowSuccessDialog(false)}>Close</AlertDialogAction>

@@ -18,7 +18,7 @@ const formSchema = z.object({
   committee1: z.string().min(1, 'Committee Preference 1 is required'),
   portfolio1_1: z.string().min(1, 'Portfolio Preference 1 is required'),
   portfolio1_2: z.string().min(1, 'Portfolio Preference 2 is required'),
-  committee2: z.string().min(1, 'Committee Preference 2 is required'),
+  committee2: zstring().min(1, 'Committee Preference 2 is required'),
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
@@ -36,6 +36,8 @@ export async function handleRegistrationForm(
   formData: FormData
 ): Promise<FormState> {
   const rawData = Object.fromEntries(formData.entries());
+  // Hardcode payment method as it's no longer a user input
+  rawData.paymentMethod = 'Bank Transfer';
 
   const validation = formSchema.safeParse(rawData);
 
