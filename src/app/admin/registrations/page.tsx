@@ -197,6 +197,34 @@ export default function RegistrationsPage() {
       default: return allData;
     }
   }
+  
+  const getFormattedDataForExport = () => {
+    const dataToExport = getVisibleData();
+    if (dataToExport.length === 0) return [];
+  
+    return dataToExport.map(item => ({
+        'Full Name': item.fullName,
+        'Email': item.email,
+        'Alt Email': item.altEmail,
+        'WhatsApp Number': String(item.whatsappNumber),
+        'Alt Contact Number': String(item.altContactNumber),
+        'Age': item.age,
+        'Grade': item.grade,
+        'Institution': item.institution,
+        'MUN Experience': item.munExperience,
+        'Committee 1': item.committee1,
+        'Portfolio 1.1': item.portfolio1_1,
+        'Portfolio 1.2': item.portfolio1_2,
+        'Committee 2': item.committee2,
+        'Questions': item.questions,
+        'Reference': item.reference,
+        'Payment Method': item.paymentMethod,
+        'Payment Screenshot': item.paymentScreenshotUrl,
+        'Status': item.status,
+        'Submitted At': new Date(item.createdAt).toLocaleString(),
+        'Admin Response': item.adminResponse,
+    }));
+  };
 
   const downloadFile = (data: string, fileName: string, fileType: string) => {
     const blob = new Blob([data], { type: fileType });
@@ -213,30 +241,31 @@ export default function RegistrationsPage() {
   };
 
   const exportToCsv = () => {
-    const dataToExport = getVisibleData();
-    if(dataToExport.length === 0) return;
+    const data = getFormattedDataForExport();
+    if(data.length === 0) return;
 
-    let csv = Object.keys(dataToExport[0]).join(',');
-    dataToExport.forEach(item => {
-        csv += '\n' + Object.values(item).map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
-    });
+    const headers = Object.keys(data[0]);
+    const csv = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${String(row[header as keyof typeof row] || '').replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
 
-    downloadFile(csv, `registrations-${activeTab}.csv`, 'text/csv');
+    downloadFile(csv, `registrations-${activeTab}.csv`, 'text/csv;charset=utf-8;');
   };
 
   const exportToJson = () => {
-    const dataToExport = getVisibleData();
-    if(dataToExport.length === 0) return;
+    const data = getFormattedDataForExport();
+    if(data.length === 0) return;
     
-    const json = JSON.stringify(dataToExport, null, 2);
+    const json = JSON.stringify(data, null, 2);
     downloadFile(json, `registrations-${activeTab}.json`, 'application/json');
   };
 
   const exportToXlsx = () => {
-    const dataToExport = getVisibleData();
-    if(dataToExport.length === 0) return;
+    const data = getFormattedDataForExport();
+    if(data.length === 0) return;
     
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
     XLSX.writeFile(workbook, `registrations-${activeTab}.xlsx`);
@@ -360,3 +389,5 @@ export default function RegistrationsPage() {
     </div>
   );
 }
+
+    
