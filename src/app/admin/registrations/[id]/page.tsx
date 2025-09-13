@@ -7,10 +7,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Mail, Phone, User, XCircle, FileText, Landmark, Users, Briefcase, Hash, Info, MessageSquare, Link as LinkIcon, Image as ImageIcon, Loader2, Save, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+    DialogClose,
+} from "@/components/ui/dialog"
+
 
 function DetailCard({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: React.ReactNode }) {
     if (!value) return null;
@@ -38,6 +49,7 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
     const [adminResponse, setAdminResponse] = useState('');
     const [isPending, startTransition] = useTransition();
     const [actionPending, startActionTransition] = useTransition();
+    const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
     useEffect(() => {
         startTransition(async () => {
@@ -75,6 +87,30 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
             }
         });
     }
+
+    const generateConfirmationMessage = () => {
+        if (!registration) return '';
+        const message = `Hello ${registration.fullName},\n\nYour MUN Delegate form had been Approved ✅\n\nYour Commitee - ${registration.committee1}\nYour Portfolio - ${registration.portfolio1_1}\n\nLooking forward for your Enthusiastic Participation.\nJoin WhatsApp Group for Further Announcements.\n\n》 Link of WhatsApp Group: [WhatsApp Link will be updated later]\n\nBest Regards,\nTeam DAVPS MUN Secretariat`;
+        return message;
+    }
+
+    const handleSendWhatsApp = () => {
+        if (!registration) return;
+        const message = generateConfirmationMessage();
+        const whatsappUrl = `https://wa.me/${registration.whatsappNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        setConfirmDialogOpen(false);
+    }
+    
+    const handleSendEmail = () => {
+        if (!registration) return;
+        const subject = "Confirmation for DAV Rohini MUN 2025";
+        const body = generateConfirmationMessage();
+        const mailtoUrl = `mailto:${registration.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoUrl;
+        setConfirmDialogOpen(false);
+    }
+
 
     if (isPending || !registration) {
         return (
@@ -199,6 +235,26 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                         {actionPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}
                         Reject
                     </Button>
+                    <Dialog open={isConfirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" disabled={registration.status !== 'approved'}>
+                                <Send className="mr-2 h-4 w-4" />
+                                Send Confirmation
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Send Confirmation</DialogTitle>
+                                <DialogDescription>
+                                    Choose the method to send the confirmation message to {registration.fullName}.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className="gap-2 sm:justify-center">
+                                <Button onClick={handleSendWhatsApp}>Send via WhatsApp</Button>
+                                <Button onClick={handleSendEmail}>Send via Email</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </CardContent>
             </Card>
 
