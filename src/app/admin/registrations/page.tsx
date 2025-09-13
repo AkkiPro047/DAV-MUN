@@ -21,88 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogFooter,
-    DialogClose,
-  } from "@/components/ui/dialog"
-import Image from 'next/image';
-
-
-function RegistrationDetail({ registration }: { registration: Registration }) {
-    const { toast } = useToast();
-    const [isPending, startTransition] = useTransition();
-
-    const handleStatusChange = (status: 'approved' | 'rejected') => {
-        startTransition(async () => {
-          const result = await updateRegistrationStatus(registration.id, status);
-          if (result.success) {
-            toast({ title: "Status Updated", description: `${registration.fullName}'s status is now ${status}.`});
-            // Optionally, close the dialog and refresh data, which will be handled by the parent
-          } else {
-            toast({ variant: 'destructive', title: "Update Failed", description: "Could not update the status." });
-          }
-        });
-      };
-
-    return (
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Registration Details</DialogTitle>
-            <DialogDescription>
-              Full submission details for {registration.fullName}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-4">
-            {Object.entries(registration).map(([key, value]) => {
-                if (key === 'id' || key === 'status') return null;
-                
-                const keyLabel = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                
-                if (key === 'paymentScreenshotUrl') {
-                    return (
-                        <div className="grid grid-cols-4 items-center gap-4" key={key}>
-                            <p className="text-sm font-medium text-right col-span-1">{keyLabel}</p>
-                            <div className="col-span-3">
-                                <a href={value} target="_blank" rel="noopener noreferrer">
-                                    <Image src={value} alt="Payment Screenshot" width={200} height={200} className="rounded-md object-contain border" />
-                                </a>
-                            </div>
-                        </div>
-                    )
-                }
-
-                return (
-                    <div className="grid grid-cols-4 items-center gap-4" key={key}>
-                        <p className="text-sm font-medium text-right col-span-1">{keyLabel}</p>
-                        <p className="col-span-3 text-sm bg-muted p-2 rounded-md">
-                            {typeof value === 'object' && value instanceof Date ? value.toLocaleString() : String(value)}
-                        </p>
-                    </div>
-                )
-            })}
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-                <Button variant="secondary">Close</Button>
-            </DialogClose>
-            <Button onClick={() => handleStatusChange('approved')} disabled={isPending} variant="default">
-                {isPending && <CheckCircle className="mr-2 h-4 w-4 animate-spin" />}
-                Approve
-            </Button>
-            <Button onClick={() => handleStatusChange('rejected')} disabled={isPending} variant="destructive">
-                 {isPending && <XCircle className="mr-2 h-4 w-4 animate-spin" />}
-                Reject
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-    )
-}
+import Link from 'next/link';
 
 
 function RegistrationRow({ registration, refreshData }: { registration: Registration, refreshData: () => void }) {
@@ -163,13 +82,12 @@ function RegistrationRow({ registration, refreshData }: { registration: Registra
             </Badge>
         </div>
         <div className="flex items-center gap-2 w-60 justify-end">
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button variant="outline" size="sm"><Eye className="mr-2 h-4 w-4" /> View</Button>
-                </DialogTrigger>
-                <RegistrationDetail registration={registration} />
-            </Dialog>
-
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/admin/registrations/${registration.id}`}>
+                <Eye className="mr-2 h-4 w-4" /> View
+              </Link>
+            </Button>
+            
             {registration.status !== 'approved' && (
                 <Button size="sm" onClick={() => handleStatusChange('approved')} disabled={isPending}>Approve</Button>
             )}

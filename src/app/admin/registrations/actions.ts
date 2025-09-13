@@ -43,6 +43,24 @@ export async function getRegistrations(): Promise<Registration[]> {
   });
 }
 
+export async function getRegistrationById(id: string): Promise<Registration | null> {
+    const adminApp = initializeAdmin();
+    const db = getFirestore(adminApp);
+    const docRef = db.collection('registrations').doc(id);
+    const docSnap = await docRef.get();
+  
+    if (!docSnap.exists) {
+      return null;
+    }
+  
+    const data = docSnap.data()!;
+    return {
+      id: docSnap.id,
+      ...data,
+      createdAt: data.createdAt.toDate(),
+    } as Registration;
+  }
+
 export async function updateRegistrationStatus(id: string, status: 'pending' | 'approved' | 'rejected'): Promise<{success: boolean}> {
     try {
         const adminApp = initializeAdmin();
