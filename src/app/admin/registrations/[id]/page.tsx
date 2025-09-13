@@ -147,8 +147,8 @@ export default function RegistrationDetailPage({ params }: { params: { id: strin
                 <DetailCard icon={Landmark} label="Institution" value={registration.institution} />
                 <DetailCard icon={Briefcase} label="MUN Experience" value={`${registration.munExperience} MUNs`} />
                 <DetailCard icon={Users} label="Committee Pref 1" value={registration.committee1} />
-                <DetailCard icon={Hash} label="Portfolio 1" value={registration.portfolio1_1} />
-                <DetailCard icon={Hash} label="Portfolio 2" value={registration.portfolio1_2} />
+                <DetailCard icon={Hash} label="Portfolio Preference 1" value={registration.portfolio1_1} />
+                <DetailCard icon={Hash} label="Portfolio Preference 2" value={registration.portfolio1_2} />
                 <DetailCard icon={Users} label="Committee Pref 2" value={registration.committee2} />
                 <DetailCard icon={MessageSquare} label="Questions" value={registration.questions} />
                 <DetailCard icon={Info} label="Reference" value={registration.reference} />

@@ -243,11 +243,11 @@ export default function RegistrationForm() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="portfolio1_1">Delegate/Country Preference 1 *</Label>
+                    <Label htmlFor="portfolio1_1">Portfolio Preference 1 *</Label>
                     <Input id="portfolio1_1" name="portfolio1_1" placeholder="Top preference" required />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="portfolio1_2">Delegate/Country Preference 2 *</Label>
+                    <Label htmlFor="portfolio1_2">Portfolio Preference 2 *</Label>
                     <Input id="portfolio1_2" name="portfolio1_2" placeholder="Alternate preference" required />
                 </div>
             </div>
