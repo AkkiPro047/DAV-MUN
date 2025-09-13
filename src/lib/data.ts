@@ -6,7 +6,7 @@ export const navLinks = [
   { href: '/events', label: 'Schedule' },
   { href: '/committees', label: 'Committees' },
 ];
-
+ 
 export const newsItems = [
   {
     id: 1,
