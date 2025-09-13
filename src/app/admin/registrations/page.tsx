@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
@@ -22,6 +23,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Link from 'next/link';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+  } from "@/components/ui/tabs"
 
 
 function RegistrationRow({ registration, refreshData }: { registration: Registration, refreshData: () => void }) {
@@ -119,21 +126,49 @@ function RegistrationRow({ registration, refreshData }: { registration: Registra
   )
 }
 
+function RegistrationList({ registrations, refreshData, isLoading }: { registrations: Registration[], refreshData: () => void, isLoading: boolean }) {
+    if (isLoading) {
+        return (
+            <div className="space-y-2 p-4">
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+            </div>
+        );
+    }
+
+    if (registrations.length === 0) {
+        return (
+            <div className="h-24 text-center flex items-center justify-center text-muted-foreground">
+                No registrations found in this category.
+            </div>
+        );
+    }
+    
+    return (
+        <div>
+            {registrations.map(reg => <RegistrationRow key={reg.id} registration={reg} refreshData={refreshData} />)}
+        </div>
+    );
+}
+
 
 export default function RegistrationsPage() {
-  const [data, setData] = useState<Registration[]>([]);
+  const [allData, setAllData] = useState<Registration[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const fetchData = () => {
     startTransition(async () => {
       const registrations = await getRegistrations();
-      setData(registrations);
+      setAllData(registrations);
     });
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const filtered = (status: 'pending' | 'approved' | 'rejected') => allData.filter(r => r.status === status);
 
   return (
     <div className="space-y-4">
@@ -142,7 +177,7 @@ export default function RegistrationsPage() {
                 <div className="flex justify-between items-start">
                     <div>
                         <CardTitle>Registration Requests</CardTitle>
-                        <CardDescription>Showing {data.length} registration(s).</CardDescription>
+                        <CardDescription>Showing {allData.length} total registration(s).</CardDescription>
                     </div>
                     <Button onClick={fetchData} variant="outline" size="icon" disabled={isPending}>
                         <RefreshCw className={cn('h-4 w-4', isPending && 'animate-spin')} />
@@ -150,26 +185,33 @@ export default function RegistrationsPage() {
                 </div>
             </CardHeader>
             <CardContent className="p-0">
-                 <div className="border-b grid grid-cols-[1fr_160px_240px] p-4 text-sm font-medium text-muted-foreground">
-                    <div className="min-w-0">Full Name</div>
-                    <div className="text-center">Status</div>
-                    <div className="text-right pr-12">Actions</div>
-                </div>
-                {isPending && data.length === 0 ? (
-                    <div className="space-y-2 p-4">
-                        <Skeleton className="h-14 w-full" />
-                        <Skeleton className="h-14 w-full" />
-                        <Skeleton className="h-14 w-full" />
+                <Tabs defaultValue="all">
+                    <div className="px-6 border-b">
+                        <TabsList>
+                            <TabsTrigger value="all">All ({allData.length})</TabsTrigger>
+                            <TabsTrigger value="pending">Pending ({filtered('pending').length})</TabsTrigger>
+                            <TabsTrigger value="approved">Approved ({filtered('approved').length})</TabsTrigger>
+                            <TabsTrigger value="rejected">Rejected ({filtered('rejected').length})</TabsTrigger>
+                        </TabsList>
                     </div>
-                ) : data.length > 0 ? (
-                    <div>
-                        {data.map(reg => <RegistrationRow key={reg.id} registration={reg} refreshData={fetchData} />)}
+                    <div className="border-b grid grid-cols-[1fr_160px_240px] p-4 text-sm font-medium text-muted-foreground">
+                        <div className="min-w-0">Full Name</div>
+                        <div className="text-center">Status</div>
+                        <div className="text-right pr-12">Actions</div>
                     </div>
-                ) : (
-                    <div className="h-24 text-center flex items-center justify-center text-muted-foreground">
-                        No registrations found.
-                    </div>
-                )}
+                    <TabsContent value="all">
+                        <RegistrationList registrations={allData} refreshData={fetchData} isLoading={isPending && allData.length === 0} />
+                    </TabsContent>
+                    <TabsContent value="pending">
+                        <RegistrationList registrations={filtered('pending')} refreshData={fetchData} isLoading={isPending && allData.length === 0} />
+                    </TabsContent>
+                    <TabsContent value="approved">
+                        <RegistrationList registrations={filtered('approved')} refreshData={fetchData} isLoading={isPending && allData.length === 0} />
+                    </TabsContent>
+                    <TabsContent value="rejected">
+                        <RegistrationList registrations={filtered('rejected')} refreshData={fetchData} isLoading={isPending && allData.length === 0} />
+                    </TabsContent>
+              </Tabs>
             </CardContent>
         </Card>
     </div>
