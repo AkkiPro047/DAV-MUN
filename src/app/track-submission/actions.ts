@@ -8,6 +8,7 @@ import * as z from 'zod';
 const ActionStateSchema = z.object({
     status: z.enum(['success', 'error', 'idle']),
     message: z.string().optional(),
+    trackingId: z.string().optional(),
     data: z.any().optional(),
 });
 
@@ -32,11 +33,11 @@ export async function getRegistrationStatus(
             return { 
                 status: 'success', 
                 message: 'Registration found.',
+                trackingId: docSnap.id,
                 data: {
                     fullName: data.fullName,
                     status: data.status,
                     email: data.email,
-                    whatsappNumber: data.whatsappNumber
                 }
             };
         } else {
