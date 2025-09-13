@@ -244,15 +244,46 @@ export default function RegistrationsPage() {
 
   const exportToPdf = () => {
     const dataToExport = getVisibleData();
-    if(dataToExport.length === 0) return;
+    if (dataToExport.length === 0) return;
 
-    const doc = new jsPDF();
-    const tableColumn = Object.keys(dataToExport[0]);
-    const tableRows = dataToExport.map(item => Object.values(item).map(v => String(v)));
+    const doc = new jsPDF({ orientation: 'landscape' });
+    
+    const columns = [
+        { header: 'Name', dataKey: 'fullName' },
+        { header: 'Email', dataKey: 'email' },
+        { header: 'Phone', dataKey: 'whatsappNumber' },
+        { header: 'Institution', dataKey: 'institution' },
+        { header: 'Committee 1', dataKey: 'committee1' },
+        { header: 'Portfolio 1', dataKey: 'portfolio1_1' },
+        { header: 'Portfolio 2', dataKey: 'portfolio1_2' },
+        { header: 'Committee 2', dataKey: 'committee2' },
+        { header: 'Status', dataKey: 'status' },
+    ];
+
+    const body = dataToExport.map(item => {
+        return {
+            fullName: item.fullName,
+            email: item.email,
+            whatsappNumber: item.whatsappNumber,
+            institution: item.institution,
+            committee1: item.committee1,
+            portfolio1_1: item.portfolio1_1,
+            portfolio1_2: item.portfolio1_2,
+            committee2: item.committee2,
+            status: item.status,
+        };
+    });
 
     doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
+        columns: columns,
+        body: body,
+        styles: {
+            fontSize: 8,
+        },
+        headStyles: {
+            fillColor: [22, 160, 133], // theme color
+            fontSize: 8,
+        },
     });
     
     doc.save(`registrations-${activeTab}.pdf`);
