@@ -228,45 +228,40 @@ export default function RegistrationForm() {
 
         {/* Chapter II: Preferences */}
         <Card>
-          <CardHeader><CardTitle className="font-headline text-2xl">Chapter II: Preferences</CardTitle></CardHeader>
-          <CardContent className="space-y-6">
-             <div className="space-y-2">
-                <Label>Committee Preference 1 *</Label>
-                <Select name="committee1" required>
-                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                        {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardHeader><CardTitle className="font-headline text-2xl">Chapter II: Preferences</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
                 <div className="space-y-2">
-                    <Label htmlFor="portfolio1_1">Portfolio Preference 1 *</Label>
-                    <Input id="portfolio1_1" name="portfolio1_1" placeholder="Top preference" required />
+                    <Label>Committee Preference *</Label>
+                    <Select name="committee1" required>
+                        <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <SelectContent>
+                            {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="portfolio1_1">Portfolio Preference 1 *</Label>
+                        <Input id="portfolio1_1" name="portfolio1_1" placeholder="Top preference" required />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="portfolio1_2">Portfolio Preference 2 *</Label>
+                        <Input id="portfolio1_2" name="portfolio1_2" placeholder="Second preference" required />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="portfolio1_3">Portfolio Preference 3 *</Label>
+                        <Input id="portfolio1_3" name="portfolio1_3" placeholder="Third preference" required />
+                    </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="portfolio1_2">Portfolio Preference 2 *</Label>
-                    <Input id="portfolio1_2" name="portfolio1_2" placeholder="Alternate preference" required />
+                    <Label htmlFor="questions">Any questions (optional)</Label>
+                    <Textarea id="questions" name="questions" placeholder="Optional" />
                 </div>
-            </div>
-            <div className="space-y-2">
-                <Label>Committee Preference 2 *</Label>
-                <Select name="committee2" required>
-                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                         {conferences[0].committees.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="questions">Any questions (optional)</Label>
-                <Textarea id="questions" name="questions" placeholder="Optional" />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="reference">Reference (optional)</Label>
-                <Input id="reference" name="reference" placeholder="Name/phone/invite code" />
-            </div>
-          </CardContent>
+                <div className="space-y-2">
+                    <Label htmlFor="reference">Reference (optional)</Label>
+                    <Input id="reference" name="reference" placeholder="Name/phone/invite code" />
+                </div>
+            </CardContent>
         </Card>
 
         {/* Chapter III: Tribute */}
@@ -360,3 +355,5 @@ export default function RegistrationForm() {
     </>
   );
 }
+
+    

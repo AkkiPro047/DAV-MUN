@@ -215,7 +215,7 @@ export default function RegistrationsPage() {
         'Committee 1': item.committee1,
         'Portfolio 1.1': item.portfolio1_1,
         'Portfolio 1.2': item.portfolio1_2,
-        'Committee 2': item.committee2,
+        'Portfolio 1.3': item.portfolio1_3,
         'Questions': item.questions,
         'Reference': item.reference,
         'Payment Method': item.paymentMethod,
@@ -282,10 +282,10 @@ export default function RegistrationsPage() {
         { header: 'Email', dataKey: 'email' },
         { header: 'Phone', dataKey: 'whatsappNumber' },
         { header: 'Institution', dataKey: 'institution' },
-        { header: 'Committee 1', dataKey: 'committee1' },
+        { header: 'Committee', dataKey: 'committee1' },
         { header: 'Portfolio 1', dataKey: 'portfolio1_1' },
         { header: 'Portfolio 2', dataKey: 'portfolio1_2' },
-        { header: 'Committee 2', dataKey: 'committee2' },
+        { header: 'Portfolio 3', dataKey: 'portfolio1_3' },
         { header: 'Status', dataKey: 'status' },
     ];
 
@@ -298,7 +298,7 @@ export default function RegistrationsPage() {
             committee1: item.committee1,
             portfolio1_1: item.portfolio1_1,
             portfolio1_2: item.portfolio1_2,
-            committee2: item.committee2,
+            portfolio1_3: item.portfolio1_3,
             status: item.status,
         };
     });

@@ -17,7 +17,7 @@ export type Registration = {
   committee1: string;
   portfolio1_1: string;
   portfolio1_2: string;
-  committee2: string;
+  portfolio1_3: string;
   questions?: string;
   reference?: string;
   paymentMethod: string;
@@ -100,3 +100,5 @@ export async function deleteRegistration(id: string): Promise<{success: boolean}
         return { success: false };
     }
 }
+
+    

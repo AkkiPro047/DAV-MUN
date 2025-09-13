@@ -163,10 +163,10 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
     };
     
     const portfolioOptions = [
-        { committee: registration.committee1, portfolio: registration.portfolio1_1, label: `Committee 1: ${registration.committee1} - ${registration.portfolio1_1}` },
-        { committee: registration.committee1, portfolio: registration.portfolio1_2, label: `Committee 1: ${registration.committee1} - ${registration.portfolio1_2}` },
-        { committee: registration.committee2, portfolio: 'N/A', label: `Committee 2: ${registration.committee2}` },
-    ];
+        { committee: registration.committee1, portfolio: registration.portfolio1_1, label: `Portfolio 1: ${registration.portfolio1_1}` },
+        { committee: registration.committee1, portfolio: registration.portfolio1_2, label: `Portfolio 2: ${registration.portfolio1_2}` },
+        { committee: registration.committee1, portfolio: registration.portfolio1_3, label: `Portfolio 3: ${registration.portfolio1_3}` },
+    ].filter(opt => opt.portfolio);
     
 
     return (
@@ -206,10 +206,10 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
                 <DetailCard icon={FileText} label="Grade" value={registration.grade} />
                 <DetailCard icon={Landmark} label="Institution" value={registration.institution} />
                 <DetailCard icon={Briefcase} label="MUN Experience" value={`${registration.munExperience} MUNs`} />
-                <DetailCard icon={Users} label="Committee Pref 1" value={registration.committee1} />
+                <DetailCard icon={Users} label="Committee Preference" value={registration.committee1} />
                 <DetailCard icon={Hash} label="Portfolio Preference 1" value={registration.portfolio1_1} />
                 <DetailCard icon={Hash} label="Portfolio Preference 2" value={registration.portfolio1_2} />
-                <DetailCard icon={Users} label="Committee Pref 2" value={registration.committee2} />
+                <DetailCard icon={Hash} label="Portfolio Preference 3" value={registration.portfolio1_3} />
                 <DetailCard icon={MessageSquare} label="Questions" value={registration.questions} />
                 <DetailCard icon={Info} label="Reference" value={registration.reference} />
                 <DetailCard icon={LinkIcon} label="Payment Method" value={registration.paymentMethod} />
@@ -270,7 +270,7 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
                             <DialogHeader>
                                 <DialogTitle>Send Confirmation to {registration.fullName}</DialogTitle>
                                 <DialogDescription>
-                                    Select the allotted committee and portfolio, then choose the method to send the confirmation.
+                                    Select the allotted portfolio for the {registration.committee1} committee, then choose how to send the confirmation.
                                 </DialogDescription>
                             </DialogHeader>
                             
@@ -302,3 +302,5 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
         </div>
     );
 }
+
+    
