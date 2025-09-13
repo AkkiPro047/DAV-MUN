@@ -30,14 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-    const { toast } = useToast();
-
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text);
-        toast({ title: 'Copied to clipboard!', description: text });
-    };
-
+function DetailRow({ label, value, onCopy }: { label: string; value: string, onCopy: (text: string) => void }) {
     return (
         <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-3">
             <div className="space-y-0.5">
@@ -48,7 +41,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={() => copyToClipboard(value)}
+                onClick={() => onCopy(value)}
             >
                 <Copy className="h-4 w-4" />
             </Button>
@@ -70,6 +63,11 @@ export default function RegistrationForm() {
   const [formState, formAction, isPending] = useActionState(handleRegistrationForm, {
     success: false,
   });
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: 'Copied to clipboard!', description: text });
+  };
 
   useEffect(() => {
     if (formState.message && !formState.success) {
@@ -285,8 +283,8 @@ export default function RegistrationForm() {
                         <p className="text-sm text-muted-foreground">Bank Name</p>
                         <p className="font-medium">CANARA BANK, SECTOR-7, ROHINI</p>
                     </div>
-                    <DetailRow label="Account No" value="8597101000004" />
-                    <DetailRow label="IFSC Code" value="CNRB0008597" />
+                    <DetailRow label="Account No" value="8597101000004" onCopy={copyToClipboard} />
+                    <DetailRow label="IFSC Code" value="CNRB0008597" onCopy={copyToClipboard} />
                 </div>
              </div>
              <div className="space-y-4">
@@ -352,11 +350,7 @@ export default function RegistrationForm() {
             <p className="font-mono text-sm text-foreground break-all">{trackingId}</p>
           </div>
           <AlertDialogFooter>
-            <Button variant="outline" onClick={() => {
-                const { toast } = useToast();
-                navigator.clipboard.writeText(trackingId);
-                toast({ title: 'Copied to clipboard!', description: trackingId });
-            }}>
+            <Button variant="outline" onClick={() => copyToClipboard(trackingId)}>
                 <Copy className="mr-2 h-4 w-4" /> Copy ID
             </Button>
             <AlertDialogAction onClick={() => setShowSuccessDialog(false)}>Close</AlertDialogAction>
