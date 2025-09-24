@@ -1,6 +1,6 @@
 
 'use server';
- 
+
 import * as z from 'zod';
 import { db } from '@/lib/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -8,9 +8,9 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 const formSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
   email: z.string().email('A valid email is required'),
-  altEmail: z.string().email('A valid alternate email is required'),
+  altEmail: z.string().email('A valid alternate email is required').optional().or(z.literal('')),
   whatsappNumber: z.string().min(10, 'A valid WhatsApp number is required'),
-  altContactNumber: z.string().min(10, 'An alternate contact number is required'),
+  altContactNumber: z.string().min(10, 'An alternate contact number is required').optional().or(z.literal('')),
   age: z.coerce.number().min(1, 'Age is required'),
   grade: z.coerce.number().min(1, 'Grade is required'),
   institution: z.string().min(2, 'Institution name is required'),
@@ -19,6 +19,10 @@ const formSchema = z.object({
   portfolio1_1: z.string().min(1, 'Portfolio Preference 1 is required'),
   portfolio1_2: z.string().min(1, 'Portfolio Preference 2 is required'),
   portfolio1_3: z.string().min(1, 'Portfolio Preference 3 is required'),
+  committee2: z.string().min(1, 'Committee Preference 2 is required'),
+  portfolio2_1: z.string().min(1, 'Portfolio Preference 1 is required'),
+  portfolio2_2: z.string().min(1, 'Portfolio Preference 2 is required'),
+  portfolio2_3: z.string().min(1, 'Portfolio Preference 3 is required'),
   questions: z.string().optional(),
   reference: z.string().optional(),
   paymentMethod: z.string(),
@@ -105,5 +109,3 @@ export async function uploadImageToImgBB(formData: FormData): Promise<UploadStat
         return { success: false, message: errorMessage };
     }
 }
-
-    
