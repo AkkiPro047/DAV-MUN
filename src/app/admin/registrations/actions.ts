@@ -1,5 +1,6 @@
+
 'use server';
- 
+
 import { initializeAdmin } from '@/lib/firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 
@@ -7,17 +8,21 @@ export type Registration = {
   id: string;
   fullName: string;
   email: string;
-  altEmail: string;
+  altEmail?: string;
   whatsappNumber: string;
-  altContactNumber: string;
+  altContactNumber?: string;
   age: number;
-  grade: number;
+  grade: string;
   institution: string;
   munExperience: number;
   committee1: string;
   portfolio1_1: string;
   portfolio1_2: string;
   portfolio1_3: string;
+  committee2: string;
+  portfolio2_1: string;
+  portfolio2_2: string;
+  portfolio2_3: string;
   questions?: string;
   reference?: string;
   paymentMethod: string;
@@ -100,5 +105,3 @@ export async function deleteRegistration(id: string): Promise<{success: boolean}
         return { success: false };
     }
 }
-
-    
