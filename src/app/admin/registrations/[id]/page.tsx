@@ -1,5 +1,6 @@
+
 'use client';
- 
+
 import { useEffect, useState, useTransition } from 'react';
 import { getRegistrationById, Registration, updateRegistrationStatus, updateRegistrationResponse } from '../actions';
 import { notFound, useRouter } from 'next/navigation';
@@ -206,10 +207,14 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
                 <DetailCard icon={FileText} label="Grade" value={registration.grade} />
                 <DetailCard icon={Landmark} label="Institution" value={registration.institution} />
                 <DetailCard icon={Briefcase} label="MUN Experience" value={`${registration.munExperience} MUNs`} />
-                <DetailCard icon={Users} label="Committee Preference" value={registration.committee1} />
-                <DetailCard icon={Hash} label="Portfolio Preference 1" value={registration.portfolio1_1} />
-                <DetailCard icon={Hash} label="Portfolio Preference 2" value={registration.portfolio1_2} />
-                <DetailCard icon={Hash} label="Portfolio Preference 3" value={registration.portfolio1_3} />
+                <DetailCard icon={Users} label="Committee Preference 1" value={registration.committee1} />
+                <DetailCard icon={Hash} label="Portfolio Preference 1.1" value={registration.portfolio1_1} />
+                <DetailCard icon={Hash} label="Portfolio Preference 1.2" value={registration.portfolio1_2} />
+                <DetailCard icon={Hash} label="Portfolio Preference 1.3" value={registration.portfolio1_3} />
+                <DetailCard icon={Users} label="Committee Preference 2" value={registration.committee2} />
+                <DetailCard icon={Hash} label="Portfolio Preference 2.1" value={registration.portfolio2_1} />
+                <DetailCard icon={Hash} label="Portfolio Preference 2.2" value={registration.portfolio2_2} />
+                <DetailCard icon={Hash} label="Portfolio Preference 2.3" value={registration.portfolio2_3} />
                 <DetailCard icon={MessageSquare} label="Questions" value={registration.questions} />
                 <DetailCard icon={Info} label="Reference" value={registration.reference} />
                 <DetailCard icon={LinkIcon} label="Payment Method" value={registration.paymentMethod} />
@@ -301,6 +306,4 @@ export default function RegistrationDetailPage({ params: { id } }: { params: { i
 
         </div>
     );
-}
-
-    
+     }
